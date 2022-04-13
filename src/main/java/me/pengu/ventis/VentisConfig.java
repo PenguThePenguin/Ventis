@@ -2,6 +2,7 @@ package me.pengu.ventis;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Builder.Default;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.context.impl.GsonContext;
 
@@ -12,11 +13,11 @@ import me.pengu.ventis.context.impl.GsonContext;
 @Getter @Builder
 public class VentisConfig {
 
-    @Builder.Default private VentisContext context = new GsonContext();
+    @Default private VentisContext context = new GsonContext();
 
     private String channel;
-    private String address;
-    private int port;
+    @Default private String address = "127.0.0.1";
+    @Default private int port = 6379;
 
     private boolean auth;
     private String password;

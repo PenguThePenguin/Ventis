@@ -47,7 +47,8 @@ public class VentisSubscriber extends JedisPubSub {
         // using indexOf as it has better performance than split
         String packetName = message.substring(0, messageIndex);
 
-        Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.ventis.getPacketListeners().get(packetName);
+        Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry =
+                this.ventis.getPacketListeners().get(packetName);
         if (packetListEntry == null) return;
 
         String data = message.substring(messageIndex + Ventis.SPLIT_REGEX.length());

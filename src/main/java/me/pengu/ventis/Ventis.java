@@ -39,7 +39,7 @@ public class Ventis {
     private final VentisConfig config;
 
     private final ExecutorService executor;
-    // packet name -> (packet's class + set of its data).
+    // packet name -> (packet's class + list of its data).
     private final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
 
     private final JedisPool jedisPool;
