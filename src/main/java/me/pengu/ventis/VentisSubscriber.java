@@ -64,8 +64,10 @@ public class VentisSubscriber extends JedisPubSub {
             try {
                 packetListener.getMethod().invoke(packetListener.getInstance(), packet);
             } catch (Exception e) {
-                throw new RuntimeException("Failed to parse: " + packetListener.getClass()
-                        + " because it has a invalid packet signature (" + e.getMessage() + ").");
+                throw new RuntimeException(
+                        String.format("Failed to parse %1$s because it has a invalid packet signature (%2$s).",
+                                packetListener.getClass(), e.getMessage())
+                );
             }
         }
     }
