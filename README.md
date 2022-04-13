@@ -1,5 +1,5 @@
 # Ventis
-Ventis is a clean and optimized api made for the Redis [PubSub](https://redis.io/docs/manual/pubsub/) system
+Ventis is an asynchronous, clean and optimized API made for the Redis [PubSub](https://redis.io/docs/manual/pubsub/) system
 
 ## Examples
 
