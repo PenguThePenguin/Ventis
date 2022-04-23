@@ -5,6 +5,7 @@ import redis.clients.jedis.Jedis;
 
 /**
  * Ventis Command.
+ * Credits go to "Yamingd" (https://github.com/yamingd/argo/blob/master/cache/src/main/java/com/argo/redis/RedisCommand.java)
  * A callback when executing a command on the jedisPool.
  * @see Ventis#runCommand(VentisCommand)
  * @param <Data> The generic type to return.
