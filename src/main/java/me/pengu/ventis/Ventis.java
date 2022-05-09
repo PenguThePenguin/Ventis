@@ -7,9 +7,7 @@ import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.handler.PacketHandler;
 import me.pengu.ventis.packet.listener.PacketListener;
 import me.pengu.ventis.packet.listener.PacketListenerData;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.*;
 
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
@@ -52,8 +50,10 @@ public class Ventis {
         );
         this.packetListeners = new ConcurrentHashMap<>();
 
-        this.jedisPool = new JedisPool(config.getAddress(), config.getPort());
-        if (config.isAuth()) this.jedisPool.getResource().auth(config.getPassword());
+        this.jedisPool = new JedisPool(
+                new JedisPoolConfig(), config.getAddress(), config.getPort(),
+                Protocol.DEFAULT_TIMEOUT, config.isAuth() ? config.getPassword() : null
+        );
 
         this.subscriber = new VentisSubscriber(this);
         this.connected = true;
@@ -80,9 +80,9 @@ public class Ventis {
             String[] channels = method.getDeclaredAnnotation(PacketHandler.class).channels();
 
             // Create an inner entry of redisPacket's class and an empty list if not present
-            Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.packetListeners.getOrDefault(
+            Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.packetListeners.computeIfAbsent(
                     packetClass.getName(),
-                    new SimpleEntry<>(redisPacket, new ArrayList<>())
+                    entry -> new SimpleEntry<>(redisPacket, new ArrayList<>())
             );
             packetListEntry.getValue().add(new PacketListenerData(packetListener, method, channels));
         }
