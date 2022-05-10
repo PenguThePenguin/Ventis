@@ -1,8 +1,11 @@
 package me.pengu.ventis.context.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.packet.Packet;
+
+import java.util.function.Supplier;
 
 /**
  * A Jackson (https://github.com/FasterXML/jackson)
@@ -10,7 +13,12 @@ import me.pengu.ventis.packet.Packet;
  */
 public class JacksonContext implements VentisContext {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
+
+    public JacksonContext provideMapper(Supplier<ObjectMapper> mapper) {
+        this.mapper = mapper.get();
+        return this;
+    }
 
     @Override
     public String serialize(Packet packet) {
