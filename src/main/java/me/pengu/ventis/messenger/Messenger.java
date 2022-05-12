@@ -1,60 +1,66 @@
-package me.pengu.ventis;
+package me.pengu.ventis.messenger;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import me.pengu.ventis.Ventis;
+import me.pengu.ventis.VentisConfig;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.listener.PacketListenerData;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
 /**
- * Ventis Subscriber
- * Extends {@link JedisPubSub} for message handling.
+ * Messenger
+ * An abstract class to be extended per database type.
  */
-public class VentisSubscriber extends JedisPubSub {
+@Getter
+@RequiredArgsConstructor
+public abstract class Messenger {
 
-    @Getter public boolean closed;
+    public static final String SPLIT_REGEX = "||";
+    public static final String CHANNEL_PREFIX = "ventis-packet:";
 
-    private final Ventis ventis;
-    private final Jedis jedis;
+    public final Ventis ventis;
+    public final VentisConfig config = this.ventis.getConfig();
+
+    public boolean connected;
 
     /**
-     * Ventis Subscriber instance.
-     * Initializes this as-well as subscribing to {@link Jedis}
-     * @param ventis {@link Ventis} instance
+     * Sends a packet.
+     * @param packet packet to send
      */
-    public VentisSubscriber(Ventis ventis) {
-        this.ventis = ventis;
-        this.jedis = ventis.getJedisPool().getResource();
-
-        this.ventis.getExecutor().submit(() ->
-                this.jedis.subscribe(this, Ventis.CHANNEL_PREFIX + "*"));
+    public void sendPacket(Packet packet) {
+        this.sendPacket(packet, this.config.getChannel());
     }
 
     /**
-     * An implementation of {@link JedisPubSub#onMessage(String, String)}.
+     * Sends a packet.
+     * @param packet packet to send
+     * @param channel redis channel to use
+     */
+    public abstract void sendPacket(Packet packet, String channel);
+
+    /**
      * De-Serializes {@param message} data using provided {@link VentisContext}'s deserializer
      * @param channel channel to listen for
      * @param message provided data in form of a String
      */
-    @Override
-    public void onMessage(String channel, String message) {
-        int messageIndex = message.indexOf(Ventis.SPLIT_REGEX);
+    public void handleMessage(String channel, String message) {
+        int messageIndex = message.indexOf(Messenger.SPLIT_REGEX);
         // using indexOf as it has better performance than split
         String packetName = message.substring(0, messageIndex);
 
-        Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry =
-                this.ventis.getPacketListeners().get(packetName);
+        Map.Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry =
+                this.getVentis().getPacketListeners().get(packetName);
         if (packetListEntry == null) return;
 
-        String data = message.substring(messageIndex + Ventis.SPLIT_REGEX.length());
+        String data = message.substring(messageIndex + Messenger.SPLIT_REGEX.length());
         Class<? extends Packet> clazz = packetListEntry.getKey();
 
-        Packet packet = this.ventis.getConfig().getContext().deSerialize(data, clazz);
+        Packet packet = this.getConfig().getContext().deSerialize(data, clazz);
         if (!clazz.getName().equalsIgnoreCase(packet.getClassName())) return; // Invalid packet, end.
 
         for (PacketListenerData packetListener : packetListEntry.getValue()) {
@@ -74,16 +80,14 @@ public class VentisSubscriber extends JedisPubSub {
     }
 
     /**
-     * Cleanup this instance.
-     * @see Ventis#close()
+     * Cleans up this Messenger instance.
      */
     public void close() {
-        if (this.isClosed()) return;
+        if (!this.connected) return;
 
-        if (super.isSubscribed()) {
-            super.unsubscribe();
-        }
-
-        this.closed = true;
+        this.ventis.close();
+        this.connected = false;
     }
 }
+
+

@@ -1,10 +1,13 @@
 package me.pengu.ventis;
 
+import com.sun.istack.internal.NotNull;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.Builder.Default;
+import lombok.Getter;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.context.impl.GsonContext;
+import me.pengu.ventis.messenger.config.RedisConfig;
+import me.pengu.ventis.messenger.config.SqlConfig;
 
 /**
  * Ventis Config.
@@ -13,12 +16,12 @@ import me.pengu.ventis.context.impl.GsonContext;
 @Getter @Builder
 public class VentisConfig {
 
+    @Default private String messengerType = "redis";
+
     @Default private VentisContext context = new GsonContext();
+    @NotNull private String channel;
 
-    private String channel;
-    @Default private String address = "127.0.0.1";
-    @Default private int port = 6379;
+    private RedisConfig redisConfig;
+    private SqlConfig sqlConfig;
 
-    private boolean auth;
-    private String password;
 }

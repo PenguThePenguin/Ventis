@@ -2,7 +2,6 @@ package me.pengu.ventis.context.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.Setter;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.packet.Packet;
 

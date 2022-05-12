@@ -1,23 +1,16 @@
 package me.pengu.ventis;
 
+import me.pengu.ventis.messenger.Messenger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 // Todo: create tests
 public class VentisTest {
 
-    static Ventis tester;
+    static Messenger tester;
 
     @BeforeClass()
     public static void testSetup() {
-        VentisConfig config = VentisConfig.builder()
-                .channel("bukkit")
-                .address("localhost")
-                .port(6379)
-                .build();
-
-        tester = new Ventis(config);
-        assert tester.isConnected();
     }
 
     @AfterClass

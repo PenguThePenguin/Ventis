@@ -3,21 +3,28 @@ Ventis is an asynchronous, clean and optimized API made for the Redis [PubSub](h
 
 ## Examples
 
-### Setup a Ventis instance:
+### Setup a Ventis and a Messenger instance:
 ```java
-         VentisConfig config = VentisConfig.builder()
+        VentisConfig config = VentisConfig.builder()
                 .context(new JacksonContext()) // You can use any serializer, even create your own!
+                .messengerType("redis")
                 .channel("bukkit")
-                .address("localhost")
-                .port(6379)
-                .build();
+                .redisConfig(
+                        RedisConfig.builder()
+                                .address("localhost")
+                                .port(6379)
+                                .build()
+                ).build();
+        
         Ventis ventis = new Ventis(config);
+		
+        Messenger messenger = ventis.getMessenger();
 ```
 
 ### Register listener + Send a Packet:
 ```java
         ventis.registerListener(new ExampleListener());
-        ventis.sendPacket(new ExamplePacket(), "channel");
+        messenger.sendPacket(new ExamplePacket(), "channel");
 ```
 
 ### Create a packet
