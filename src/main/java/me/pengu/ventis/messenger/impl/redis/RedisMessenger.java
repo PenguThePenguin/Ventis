@@ -10,6 +10,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 /**
@@ -41,12 +42,16 @@ public class RedisMessenger extends Messenger {
      * Sends a packet.
      * @param packet packet to send
      * @param channel redis channel to use
+     *
+     @return a future to manipulate the result of the operation
      */
     @Override
-    public void sendPacket(Packet packet, String channel) {
-        this.getVentis().getExecutor().submit(() -> this.runCommand(redis ->
-                redis.publish(CHANNEL_PREFIX + channel, packet.toString(this.config.getContext()))
-        ));
+    public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
+        return CompletableFuture.runAsync(() ->
+                this.runCommand(redis ->
+                        redis.publish(CHANNEL_PREFIX + channel, packet.toString(this.config.getContext()))
+                ), this.ventis.getExecutor()
+        );
     }
 
     /**

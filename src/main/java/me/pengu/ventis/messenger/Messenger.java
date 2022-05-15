@@ -11,6 +11,7 @@ import me.pengu.ventis.packet.listener.PacketListenerData;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Messenger
@@ -31,37 +32,42 @@ public abstract class Messenger {
     /**
      * Sends a packet.
      * @param packet packet to send
+     * @return a future to manipulate the result of the operation
      */
-    public void sendPacket(Packet packet) {
-        this.sendPacket(packet, this.config.getChannel());
+    public CompletableFuture<Void> sendPacket(Packet packet) {
+        return this.sendPacket(packet, this.config.getChannel());
     }
 
     /**
      * Sends a packet.
      * @param packet packet to send
      * @param channel redis channel to use
+     *
+     * @return a future to manipulate the result of the operation
      */
-    public abstract void sendPacket(Packet packet, String channel);
+    public abstract CompletableFuture<Void> sendPacket(Packet packet, String channel);
 
     /**
      * De-Serializes {@param message} data using provided {@link VentisContext}'s deserializer
      * @param channel channel to listen for
      * @param message provided data in form of a String
+     *
+     * @return boolean to check if packet is valid
      */
-    public void handleMessage(String channel, String message) {
+    public boolean handleMessage(String channel, String message) {
         int messageIndex = message.indexOf(Messenger.SPLIT_REGEX);
         // using indexOf as it has better performance than split
         String packetName = message.substring(0, messageIndex);
 
         Map.Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry =
                 this.getVentis().getPacketListeners().get(packetName);
-        if (packetListEntry == null) return;
+        if (packetListEntry == null) return false;
 
         String data = message.substring(messageIndex + Messenger.SPLIT_REGEX.length());
         Class<? extends Packet> clazz = packetListEntry.getKey();
 
         Packet packet = this.getConfig().getContext().deSerialize(data, clazz);
-        if (!clazz.getName().equalsIgnoreCase(packet.getClassName())) return; // Invalid packet, end.
+        if (!clazz.getName().equalsIgnoreCase(packet.getClassName())) return false; // Invalid packet, end.
 
         for (PacketListenerData packetListener : packetListEntry.getValue()) {
             if (packetListener.getChannels().length > 0 && !Arrays.asList(packetListener.getChannels())
@@ -70,6 +76,7 @@ public abstract class Messenger {
 
             try {
                 packetListener.getMethod().invoke(packetListener.getInstance(), packet);
+                return true;
             } catch (Exception e) {
                 throw new RuntimeException(
                         String.format("Failed to parse %1$s because it has a invalid packet signature (%2$s).",
@@ -77,6 +84,7 @@ public abstract class Messenger {
                 );
             }
         }
+        return false;
     }
 
     /**

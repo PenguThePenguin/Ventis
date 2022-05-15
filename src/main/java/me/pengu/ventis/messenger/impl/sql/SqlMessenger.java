@@ -5,6 +5,8 @@ import me.pengu.ventis.messenger.Messenger;
 import me.pengu.ventis.VentisConfig;
 import me.pengu.ventis.packet.Packet;
 
+import java.util.concurrent.CompletableFuture;
+
 // TODO
 public class SqlMessenger extends Messenger {
 
@@ -13,7 +15,7 @@ public class SqlMessenger extends Messenger {
     }
 
     @Override
-    public void sendPacket(Packet packet, String channel) {
-
+    public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package me.pengu.ventis;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
+import lombok.Setter;
 import me.pengu.ventis.messenger.Messenger;
 import me.pengu.ventis.messenger.impl.redis.RedisMessenger;
 import me.pengu.ventis.packet.Packet;
@@ -25,14 +26,14 @@ import java.util.logging.Logger;
  * Ventis, a simple and clean packet api.
  * Currently, supporting redis messaging.
  */
-@Getter
+@Getter @Setter
 public class Ventis {
 
-    private final VentisConfig config;
-    private final Messenger messenger;
+    private VentisConfig config;
+    private Messenger messenger;
 
-    public final ExecutorService executor;
-    public final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
+    private final ExecutorService executor;
+    private final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
 
     /**
      * Ventis instance.
@@ -58,6 +59,8 @@ public class Ventis {
     }
 
     public Messenger getMessagingFor(String messengerType) {
+        if (messengerType == null || messengerType.isEmpty()) return null;
+
         switch (messengerType.toLowerCase()) {
             case "redis":
                 return new RedisMessenger(this);
@@ -100,7 +103,7 @@ public class Ventis {
     }
 
     public void close() {
-        this.executor.shutdownNow();
+        this.executor.shutdown();
         try {
             if (!executor.awaitTermination(1, TimeUnit.MINUTES))
                 Logger.getGlobal().severe("Timed out waiting for ventis executor to terminate");
