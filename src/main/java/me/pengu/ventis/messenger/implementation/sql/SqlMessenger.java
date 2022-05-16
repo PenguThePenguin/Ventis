@@ -62,11 +62,13 @@ public class SqlMessenger extends Messenger {
 
             if (!this.connected) {
                 this.lock.readLock().unlock();
+                return;
             }
 
-            try (Connection c = getConnection()) {
-                try (PreparedStatement ps = c.prepareStatement("INSERT INTO `" + getTableName() + "` (`time`, `message`) VALUES(NOW(), ?)")) {
+            try (Connection connection = getConnection()) {
+                try (PreparedStatement ps = connection.prepareStatement("INSERT INTO `" + getTableName() + "` (`time`, 'channel' `message`) VALUES(NOW(), ?, ?)")) {
                     ps.setString(1, packet.toString(this.config.getContext()));
+                    ps.setString(2, channel);
                     ps.execute();
                 }
             } catch (Exception e) {

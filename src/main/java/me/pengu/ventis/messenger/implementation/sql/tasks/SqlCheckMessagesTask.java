@@ -41,7 +41,7 @@ public class SqlCheckMessagesTask implements Runnable {
         }
 
         try (Connection connection = this.messenger.getConnection()) {
-            try (PreparedStatement ps = connection.prepareStatement("SELECT `id`, `message`, FROM `" + this.messenger.getTableName() + "` WHERE `id` > ? AND (NOW() - `time` < 30)")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT `id`, 'channel', `message`, FROM `" + this.messenger.getTableName() + "` WHERE `id` > ? AND (NOW() - `time` < 30)")) {
                 ps.setLong(1, this.messenger.getLastId());
 
                 try (ResultSet rs = ps.executeQuery()) {
@@ -51,7 +51,9 @@ public class SqlCheckMessagesTask implements Runnable {
                         this.messenger.setLastId(Math.max(this.messenger.getLastId(), id));
 
                         String message = rs.getString("message");
-                        this.messenger.handleMessage("", message);
+                        String channel = rs.getString("channel");
+
+                        this.messenger.handleMessage(channel, message);
                     }
                 }
             }
