@@ -15,14 +15,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 public class SqlCleanupTask implements Runnable {
 
     private final SqlMessenger messenger;
-    private final ReadWriteLock lock;
-
     private final ScheduledFuture<?> task;
 
     public SqlCleanupTask(SqlMessenger messenger) {
         this.messenger = messenger;
-        this.lock = messenger.getLock();
-
         this.task = this.messenger.getVentis().getExecutor().scheduleAtFixedRate(
                 this, 0L, 30L, TimeUnit.SECONDS
         );
@@ -30,12 +26,7 @@ public class SqlCleanupTask implements Runnable {
 
     @Override
     public void run() {
-        this.lock.readLock().lock();
-
-        if (!this.messenger.isConnected()) {
-            lock.readLock().unlock();
-            return;
-        }
+        if (this.messenger.checkLock()) return;
 
         try (Connection connection = this.messenger.getConnection()) {
             try (PreparedStatement ps = connection.prepareStatement("DELETE FROM `" + this.messenger.getTableName() + "` WHERE (NOW() - `time` > 60)")) {
@@ -44,7 +35,7 @@ public class SqlCleanupTask implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            this.lock.readLock().unlock();
+            this.messenger.getLock().readLock().unlock();
         }
     }
 

@@ -18,14 +18,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 public class SqlCheckMessagesTask implements Runnable {
 
     private final SqlMessenger messenger;
-    private final ReadWriteLock lock;
-
     private final ScheduledFuture<?> task;
 
     public SqlCheckMessagesTask(SqlMessenger messenger) {
         this.messenger = messenger;
-        this.lock = this.messenger.getLock();
-
         this.task = this.messenger.getVentis().getExecutor().scheduleAtFixedRate(
                 this, 0L, 1L, TimeUnit.SECONDS
         );
@@ -33,12 +29,7 @@ public class SqlCheckMessagesTask implements Runnable {
 
     @Override
     public void run() {
-        this.lock.readLock().lock();
-
-        if (!this.messenger.isConnected()) {
-            this.lock.readLock().unlock();
-            return;
-        }
+        if (this.messenger.checkLock()) return;
 
         try (Connection connection = this.messenger.getConnection()) {
             try (PreparedStatement ps = connection.prepareStatement("SELECT `id`, 'channel', `message`, FROM `" + this.messenger.getTableName() + "` WHERE `id` > ? AND (NOW() - `time` < 30)")) {
@@ -60,7 +51,7 @@ public class SqlCheckMessagesTask implements Runnable {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            this.lock.readLock().unlock();
+            this.messenger.getLock().readLock().unlock();
         }
     }
 

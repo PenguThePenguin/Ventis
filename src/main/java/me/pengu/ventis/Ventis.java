@@ -87,13 +87,13 @@ public class Ventis {
                 );
             }
 
-            Class<? extends Packet> redisPacket = packetClass.asSubclass(Packet.class);
+            Class<? extends Packet> packet = packetClass.asSubclass(Packet.class);
             String[] channels = method.getDeclaredAnnotation(PacketHandler.class).channels();
 
-            // Create an inner entry of redisPacket's class and an empty list if not present
+            // Create an inner entry of packet's class and an empty list if not present
             Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.getPacketListeners().computeIfAbsent(
                     packetClass.getName(),
-                    entry -> new SimpleEntry<>(redisPacket, new ArrayList<>())
+                    entry -> new SimpleEntry<>(packet, new ArrayList<>())
             );
             packetListEntry.getValue().add(new PacketListenerData(packetListener, method, channels));
         }

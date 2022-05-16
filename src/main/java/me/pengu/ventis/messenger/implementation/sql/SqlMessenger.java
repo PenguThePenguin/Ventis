@@ -58,12 +58,7 @@ public class SqlMessenger extends Messenger {
     @Override
     public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
         return CompletableFuture.runAsync(() -> {
-            this.lock.readLock().lock();
-
-            if (!this.connected) {
-                this.lock.readLock().unlock();
-                return;
-            }
+            if (this.checkLock()) return;
 
             try (Connection connection = getConnection()) {
                 try (PreparedStatement ps = connection.prepareStatement("INSERT INTO `" + getTableName() + "` (`time`, 'channel' `message`) VALUES(NOW(), ?, ?)")) {
@@ -80,11 +75,27 @@ public class SqlMessenger extends Messenger {
     }
 
     /**
-     * Returns this connection
-     * @return the {@link SqlConfig}'s provided connection;
+     * This configs current connection
+     * @return the {@link SqlConfig}'s provided connection
+     * @throws SQLException when the database isn't active
      */
     public Connection getConnection() throws SQLException {
         return this.sqlConfig.getConnection().getConnection();
+    }
+
+    /**
+     * Checks if this lock is locked
+     * @return if this is not connected
+     */
+    public boolean checkLock() {
+        this.lock.readLock().lock();
+
+        if (!this.connected) {
+            this.lock.readLock().unlock();
+            return true;
+        }
+
+        return false;
     }
 
     /**
