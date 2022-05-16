@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger.impl.redis;
+package me.pengu.ventis.messenger.implementation.redis;
 
 import lombok.Getter;
 import me.pengu.ventis.Ventis;
@@ -20,6 +20,8 @@ import java.util.function.Function;
 public class RedisMessenger extends Messenger {
 
     @Getter private final JedisPool jedisPool;
+
+    private final RedisConfig redisConfig;
     private final RedisSubscriber subscriber;
 
     /**
@@ -28,12 +30,11 @@ public class RedisMessenger extends Messenger {
      */
     public RedisMessenger(Ventis ventis) {
         super(ventis);
-
-        RedisConfig redisConfig = this.config.getRedisConfig();
+        this.redisConfig = ventis.getConfig().getRedisConfig();
 
         this.jedisPool = new JedisPool(
-                new JedisPoolConfig(), redisConfig.getAddress(), redisConfig.getPort(),
-                Protocol.DEFAULT_TIMEOUT, redisConfig.isAuth() ? redisConfig.getPassword() : null
+                new JedisPoolConfig(), this.redisConfig.getAddress(), this.redisConfig.getPort(),
+                this.redisConfig.getTimeout(), this.redisConfig.isAuth() ? this.redisConfig.getPassword() : null
         );
         this.subscriber = new RedisSubscriber(this);
     }

@@ -4,7 +4,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import me.pengu.ventis.messenger.Messenger;
-import me.pengu.ventis.messenger.impl.redis.RedisMessenger;
+import me.pengu.ventis.messenger.implementation.redis.RedisMessenger;
 import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.handler.PacketHandler;
 import me.pengu.ventis.packet.listener.PacketListener;
@@ -16,10 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 /**
@@ -32,7 +29,7 @@ public class Ventis {
     private VentisConfig config;
     private Messenger messenger;
 
-    private final ExecutorService executor;
+    private final ScheduledThreadPoolExecutor executor;
     private final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
 
     /**
@@ -52,8 +49,8 @@ public class Ventis {
         this.config = config;
         this.messenger = this.getMessagingFor(messengerType);
 
-        this.executor = Executors.newCachedThreadPool(
-                new ThreadFactoryBuilder().setNameFormat("Ventis - Packet Thread - %d").build()
+        this.executor = new ScheduledThreadPoolExecutor(1,
+                new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Ventis - Packet Thread - %d").build()
         );
         this.packetListeners = new ConcurrentHashMap<>();
     }
@@ -79,7 +76,7 @@ public class Ventis {
      */
     public void registerListener(PacketListener packetListener) {
         for (Method method : packetListener.getClass().getDeclaredMethods()) {
-            if (method.getDeclaredAnnotation(PacketHandler.class) == null
+            if (!method.isAnnotationPresent(PacketHandler.class)
                     || method.getParameters().length == 0) continue;
 
             Class<?> packetClass = method.getParameters()[0].getType();

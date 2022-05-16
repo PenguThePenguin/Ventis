@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger.impl.redis;
+package me.pengu.ventis.messenger.implementation.redis;
 
 import lombok.Getter;
 import me.pengu.ventis.messenger.Messenger;

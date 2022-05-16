@@ -52,7 +52,7 @@ public abstract class Messenger {
      * @param channel channel to listen for
      * @param message provided data in form of a String
      *
-     * @return boolean to check if packet is valid
+     * @return a boolean to check if packet is valid
      */
     public boolean handleMessage(String channel, String message) {
         int messageIndex = message.indexOf(Messenger.SPLIT_REGEX);

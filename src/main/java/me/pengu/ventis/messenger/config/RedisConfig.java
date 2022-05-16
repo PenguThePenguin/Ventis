@@ -3,7 +3,8 @@ package me.pengu.ventis.messenger.config;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
-import me.pengu.ventis.messenger.impl.redis.RedisMessenger;
+import me.pengu.ventis.messenger.implementation.redis.RedisMessenger;
+import redis.clients.jedis.Protocol;
 
 /**
  * Redis Config.
@@ -13,6 +14,8 @@ import me.pengu.ventis.messenger.impl.redis.RedisMessenger;
 public class RedisConfig {
 
     private String channel;
+
+    @Default private int timeout = Protocol.DEFAULT_TIMEOUT;
     @Default private String address = "127.0.0.1";
     @Default private int port = 6379;
 
