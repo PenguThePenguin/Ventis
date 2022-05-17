@@ -1,7 +1,6 @@
 package me.pengu.ventis.connection;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.pengu.ventis.Ventis;
 import me.pengu.ventis.VentisConfig;
 import me.pengu.ventis.context.VentisContext;
@@ -24,7 +23,7 @@ public abstract class Connection {
     public static final String CHANNEL_PREFIX = "ventis-packet:";
 
     public final Ventis ventis;
-    public final String name;
+    private final String name;
     public final VentisConfig config;
 
     public boolean connected;

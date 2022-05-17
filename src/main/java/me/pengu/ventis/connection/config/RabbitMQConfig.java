@@ -4,24 +4,20 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import me.pengu.ventis.connection.implementation.redis.RedisConnection;
-import me.pengu.ventis.connection.implementation.socket.Server;
-
-import java.util.ArrayList;
-import java.util.List;
+import redis.clients.jedis.Protocol;
 
 /**
- * Socket Config.
+ * RabbitMQ Config.
  * Provides {@link RedisConnection} with the provided options
  */
 @Getter @Builder
-public class SocketConfig {
-
-    @Default List<Server> servers = new ArrayList<>();
+public class RabbitMQConfig {
 
     @Default private String address = "127.0.0.1";
-    private int port;
+    @Default private int port = 5672;
+    private String virtualHost;
 
-    private boolean auth;
+    private String username;
     private String password;
 
 }

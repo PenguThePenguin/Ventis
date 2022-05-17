@@ -11,7 +11,7 @@ import redis.clients.jedis.JedisPubSub;
  */
 public class RedisSubscriber extends JedisPubSub {
 
-    @Getter public boolean closed;
+    @Getter private boolean closed;
 
     private final RedisConnection connection;
     private final Jedis jedis;
@@ -33,6 +33,7 @@ public class RedisSubscriber extends JedisPubSub {
 
     /**
      * An implementation of {@link JedisPubSub#onMessage(String, String)}.
+     *
      * @param channel channel to listen for
      * @param message provided data in form of a String
      */

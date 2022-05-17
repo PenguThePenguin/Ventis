@@ -3,7 +3,6 @@ package me.pengu.ventis.connection.implementation.sql.connection.file;
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 public class SqLiteConnection extends FileConnection {

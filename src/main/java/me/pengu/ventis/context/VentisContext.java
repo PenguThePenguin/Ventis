@@ -10,6 +10,7 @@ public interface VentisContext {
 
     /**
      * Serializes the specified packet.
+     *
      * @param packet the packet to serialize.
      * @return String the serialized packet.
      */
@@ -17,7 +18,8 @@ public interface VentisContext {
 
     /**
      * De-Serializes a packet
-     * @param data the String to deserialize.
+     *
+     * @param data        the String to deserialize.
      * @param packetClass The Class of the packet.
      * @return Packet the packet decoded from the String.
      */

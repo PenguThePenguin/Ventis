@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
+import me.pengu.ventis.connection.config.RabbitMQConfig;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.context.impl.GsonContext;
 import me.pengu.ventis.connection.config.RedisConfig;
@@ -25,5 +26,6 @@ public class VentisConfig {
     private RedisConfig redisConfig;
     private SqlConfig sqlConfig;
     private SocketConfig socketConfig;
+    private RabbitMQConfig rabbitMQConfig;
 
 }

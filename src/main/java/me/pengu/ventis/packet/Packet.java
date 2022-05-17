@@ -19,6 +19,7 @@ public class Packet {
 
     /**
      * Gets this packet as a string.
+     *
      * @param context Type of context used
      * @return String this packet as a string
      */

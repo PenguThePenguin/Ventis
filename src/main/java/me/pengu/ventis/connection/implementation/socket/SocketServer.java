@@ -31,7 +31,8 @@ public class SocketServer implements Runnable {
     @Override
     public void run() {
         while (this.connection.isConnected()) {
-            try (Socket socket = serverSocket.accept(); DataInputStream input = new DataInputStream(socket.getInputStream())) {
+            try (Socket socket = serverSocket.accept();
+                 DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
                 String channel = input.readUTF();
                 if (!this.connection.getChannel().equals(channel)) return;
