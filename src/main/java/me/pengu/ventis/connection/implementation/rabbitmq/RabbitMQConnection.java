@@ -33,10 +33,10 @@ public class RabbitMQConnection extends Connection {
     private com.rabbitmq.client.Connection connection;
     private Channel channel;
 
-    public RabbitMQConnection(Ventis ventis) {
+    public RabbitMQConnection(Ventis ventis, RabbitMQConfig rabbitMQConfig) {
         super(ventis, "RabbitMQ");
 
-        this.rabbitMQConfig = ventis.getConfig().getRabbitMQConfig();
+        this.rabbitMQConfig = rabbitMQConfig;
         this.routingKey = Connection.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
 
         this.subscriber = new RabbitMQSubscriber(this);

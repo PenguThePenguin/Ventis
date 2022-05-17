@@ -36,10 +36,10 @@ public class SqlConnection extends Connection {
      *
      * @param ventis {@link Ventis} instance
      */
-    public SqlConnection(Ventis ventis) {
+    public SqlConnection(Ventis ventis, SqlConfig sqlConfig) {
         super(ventis, "sql");
 
-        this.sqlConfig = this.ventis.getConfig().getSqlConfig();
+        this.sqlConfig = sqlConfig;
         this.tableName = Connection.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
 
         this.sqlConfig.getConnection().load(this.sqlConfig);

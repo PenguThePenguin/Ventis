@@ -37,54 +37,21 @@ public class Ventis {
     private final ScheduledThreadPoolExecutor executor;
     private final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
 
-    /**
-     * Ventis instance.
-     *
-     * @param config selected config options {@link VentisConfig}
-     */
-    public Ventis(VentisConfig config) {
-        this(config, config.getConnectionType());
-    }
 
     /**
      * Ventis instance.
      *
      * @param config         selected config options {@link VentisConfig}
-     * @param connectionType connection type to initialize
      */
-    public Ventis(VentisConfig config, String connectionType) {
+    public Ventis(VentisConfig config) {
         this.config = config;
-
         this.connections = new HashMap<>();
-        if (connectionType != null && !connectionType.isEmpty()) {
-            this.registerConnection(this.getConnectionFor(connectionType));
-        }
 
         this.executor = new ScheduledThreadPoolExecutor(1,
                 new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Ventis - Packet Thread - %d").build()
         );
         this.packetListeners = new ConcurrentHashMap<>();
     }
-
-    /**
-     * Gets the connection type from a string.
-     *
-     * @param connectionType type to use
-     * @return the Connection instance
-     */
-    public Connection getConnectionFor(String connectionType) {
-        switch (connectionType.toLowerCase()) {
-            case "redis":
-                return new RedisConnection(this);
-            case "sql":
-                return new SqlConnection(this);
-            case "socket":
-                return new SocketConnection(this);
-        }
-
-        throw new IllegalArgumentException("Invalid provided connection type " + connectionType);
-    }
-
     /**
      * Registers a connection.
      *

@@ -22,7 +22,7 @@ public class SocketServer implements Runnable {
 
     private void setupSocket() {
         try {
-            this.serverSocket = new ServerSocket(this.connection.getConfig().getSocketConfig().getPort());
+            this.serverSocket = new ServerSocket(this.connection.getSocketConfig().getPort());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,10 +39,10 @@ public class SocketServer implements Runnable {
 
                 String message = input.readUTF();
 
-                if (this.connection.getConfig().getSocketConfig().isAuth()) {
+                if (this.connection.getSocketConfig().isAuth()) {
                     String password = input.readUTF();
 
-                    if (!password.equals(this.connection.getConfig().getSocketConfig().getPassword())) {
+                    if (!password.equals(this.connection.getSocketConfig().getPassword())) {
                         throw new RuntimeException(
                                 "Attempted Un-authenticated packet sent on channel " + channel + ":\n" +
                                         "Address: " + socket.getInetAddress().getHostAddress() + "\n" +
