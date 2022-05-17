@@ -18,16 +18,24 @@ import java.util.concurrent.CompletableFuture;
  * An abstract class to be extended per database type.
  */
 @Getter
-@RequiredArgsConstructor
 public abstract class Connection {
 
     public static final String SPLIT_REGEX = "||";
     public static final String CHANNEL_PREFIX = "ventis-packet:";
 
     public final Ventis ventis;
-    public final VentisConfig config = this.ventis.getConfig();
+    public final String name;
+    public final VentisConfig config;
 
     public boolean connected;
+
+    public Connection(Ventis ventis, String name, VentisConfig ventisConfig) {
+        this.ventis = ventis;
+        this.name = name;
+        this.config = this.ventis.getConfig();
+
+        this.ventis.register(this);
+    }
 
     /**
      * Sends a packet.

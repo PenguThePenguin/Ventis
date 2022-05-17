@@ -28,7 +28,7 @@ public class RedisConnection extends Connection {
      * @param ventis {@link Ventis} instance
      */
     public RedisConnection(Ventis ventis) {
-        super(ventis);
+        super(ventis, "redis");
         this.redisConfig = ventis.getConfig().getRedisConfig();
 
         this.jedisPool = new JedisPool(

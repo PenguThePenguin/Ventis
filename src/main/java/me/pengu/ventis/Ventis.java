@@ -15,6 +15,7 @@ import me.pengu.ventis.packet.listener.PacketListenerData;
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
 public class Ventis {
 
     private VentisConfig config;
-    private Connection connection;
+    private final Map<String, Connection> connections;
 
     private final ScheduledThreadPoolExecutor executor;
     private final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
@@ -49,7 +50,11 @@ public class Ventis {
      */
     public Ventis(VentisConfig config, String connectionType) {
         this.config = config;
-        this.connection = this.getConnectionFor(connectionType);
+
+        this.connections = new HashMap<>();
+        if (connectionType != null && !connectionType.isEmpty()) {
+            this.register(this.getConnectionFor(connectionType));
+        }
 
         this.executor = new ScheduledThreadPoolExecutor(1,
                 new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Ventis - Packet Thread - %d").build()
@@ -58,8 +63,6 @@ public class Ventis {
     }
 
     public Connection getConnectionFor(String connectionType) {
-        if (connectionType == null || connectionType.isEmpty()) return null;
-
         switch (connectionType.toLowerCase()) {
             case "redis":
                 return new RedisConnection(this);
@@ -70,6 +73,10 @@ public class Ventis {
         }
 
         throw new IllegalArgumentException("Invalid provided connection " + connectionType);
+    }
+
+    public void register(Connection connection) {
+        this.connections.put(connection.getName(), connection);
     }
 
     /**

@@ -17,7 +17,7 @@ public class SocketConnection extends Connection {
     private final SocketServer socketServer;
 
     public SocketConnection(Ventis ventis) {
-        super(ventis);
+        super(ventis, "socket");
 
         this.channel = Connection.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
         this.socketServer = new SocketServer(this);
