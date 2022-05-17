@@ -1,6 +1,6 @@
-package me.pengu.ventis.messenger.implementation.sql.connection.file;
+package me.pengu.ventis.connection.implementation.sql.connection.file;
 
-import me.pengu.ventis.messenger.implementation.sql.connection.SqlConnection;
+import me.pengu.ventis.connection.implementation.sql.connection.SqlConnection;
 
 import java.nio.file.Path;
 import java.sql.Connection;

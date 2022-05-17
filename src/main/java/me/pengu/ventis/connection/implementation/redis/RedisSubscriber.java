@@ -1,7 +1,7 @@
-package me.pengu.ventis.messenger.implementation.redis;
+package me.pengu.ventis.connection.implementation.redis;
 
 import lombok.Getter;
-import me.pengu.ventis.messenger.Messenger;
+import me.pengu.ventis.connection.Connection;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -13,21 +13,21 @@ public class RedisSubscriber extends JedisPubSub {
 
     @Getter public boolean closed;
 
-    private final RedisMessenger messenger;
+    private final RedisConnection connection;
     private final Jedis jedis;
 
     /**
      * Redis Subscriber instance.
      * Initializes this as-well as subscribing to {@link Jedis}
      *
-     * @param messenger {@link RedisMessenger} instance
+     * @param connection {@link RedisConnection} instance
      */
-    public RedisSubscriber(RedisMessenger messenger) {
-        this.messenger = messenger;
-        this.jedis = messenger.getJedisPool().getResource();
+    public RedisSubscriber(RedisConnection connection) {
+        this.connection = connection;
+        this.jedis = this.connection.getJedisPool().getResource();
 
-        this.messenger.getVentis().getExecutor().submit(() ->
-                this.jedis.subscribe(this, Messenger.CHANNEL_PREFIX + "*")
+        this.connection.getVentis().getExecutor().submit(() ->
+                this.jedis.subscribe(this, Connection.CHANNEL_PREFIX + "*")
         );
     }
 
@@ -38,7 +38,7 @@ public class RedisSubscriber extends JedisPubSub {
      */
     @Override
     public void onMessage(String channel, String message) {
-        this.messenger.handleMessage(channel, message);
+        this.connection.handleMessage(channel, message);
     }
 
     /**

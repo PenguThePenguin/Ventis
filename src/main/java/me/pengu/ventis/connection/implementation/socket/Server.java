@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger.implementation.socket;
+package me.pengu.ventis.connection.implementation.socket;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -2,11 +2,11 @@ package me.pengu.ventis.packet;
 
 import lombok.Data;
 import me.pengu.ventis.context.VentisContext;
-import me.pengu.ventis.messenger.Messenger;
+import me.pengu.ventis.connection.Connection;
 
 /**
  * Represents data that can be sent through redis.
- * @see Messenger#sendPacket(Packet)
+ * @see Connection#sendPacket(Packet)
  */
 @Data
 public class Packet {
@@ -23,6 +23,6 @@ public class Packet {
      * @return String this packet as a string
      */
     public String toString(VentisContext context) {
-        return this.getClassName() + Messenger.SPLIT_REGEX + context.serialize(this);
+        return this.getClassName() + Connection.SPLIT_REGEX + context.serialize(this);
     }
 }

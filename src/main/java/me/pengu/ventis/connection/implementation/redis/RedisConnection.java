@@ -1,23 +1,22 @@
-package me.pengu.ventis.messenger.implementation.redis;
+package me.pengu.ventis.connection.implementation.redis;
 
 import lombok.Getter;
 import me.pengu.ventis.Ventis;
-import me.pengu.ventis.messenger.Messenger;
-import me.pengu.ventis.messenger.config.RedisConfig;
+import me.pengu.ventis.connection.Connection;
+import me.pengu.ventis.connection.config.RedisConfig;
 import me.pengu.ventis.packet.Packet;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.Protocol;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 /**
- * Redis Messenger
- * Extends {@link Messenger} for packet handling.
+ * Redis Connection
+ * Extends {@link Connection} for packet handling.
  */
-public class RedisMessenger extends Messenger {
+public class RedisConnection extends Connection {
 
     @Getter private final JedisPool jedisPool;
 
@@ -25,10 +24,10 @@ public class RedisMessenger extends Messenger {
     private final RedisSubscriber subscriber;
 
     /**
-     * Redis Messenger instance.
+     * Redis Connection instance.
      * @param ventis {@link Ventis} instance
      */
-    public RedisMessenger(Ventis ventis) {
+    public RedisConnection(Ventis ventis) {
         super(ventis);
         this.redisConfig = ventis.getConfig().getRedisConfig();
 
@@ -85,7 +84,7 @@ public class RedisMessenger extends Messenger {
 
     /**
      * Cleans up this redis instance.
-     * @see Messenger#close()
+     * @see Connection#close()
      */
     @Override
     public void close() {

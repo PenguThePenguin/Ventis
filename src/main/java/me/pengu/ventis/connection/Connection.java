@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger;
+package me.pengu.ventis.connection;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,12 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Messenger
+ * Connection
  * An abstract class to be extended per database type.
  */
 @Getter
 @RequiredArgsConstructor
-public abstract class Messenger {
+public abstract class Connection {
 
     public static final String SPLIT_REGEX = "||";
     public static final String CHANNEL_PREFIX = "ventis-packet:";
@@ -55,7 +55,7 @@ public abstract class Messenger {
      * @return a boolean to check if packet is valid
      */
     public boolean handleMessage(String channel, String message) {
-        int messageIndex = message.indexOf(Messenger.SPLIT_REGEX);
+        int messageIndex = message.indexOf(Connection.SPLIT_REGEX);
         // using indexOf as it has better performance than split
         String packetName = message.substring(0, messageIndex);
 
@@ -63,7 +63,7 @@ public abstract class Messenger {
                 this.getVentis().getPacketListeners().get(packetName);
         if (packetListEntry == null) return false;
 
-        String data = message.substring(messageIndex + Messenger.SPLIT_REGEX.length());
+        String data = message.substring(messageIndex + Connection.SPLIT_REGEX.length());
         Class<? extends Packet> clazz = packetListEntry.getKey();
 
         Packet packet = this.getConfig().getContext().deSerialize(data, clazz);
@@ -88,7 +88,7 @@ public abstract class Messenger {
     }
 
     /**
-     * Cleans up this Messenger instance.
+     * Cleans up this connection instance.
      */
     public void close() {
         if (!this.connected) return;

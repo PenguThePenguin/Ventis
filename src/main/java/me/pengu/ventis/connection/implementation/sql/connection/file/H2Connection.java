@@ -1,9 +1,8 @@
-package me.pengu.ventis.messenger.implementation.sql.connection.file;
+package me.pengu.ventis.connection.implementation.sql.connection.file;
 
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 public class H2Connection extends FileConnection {

@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger.implementation.sql.connection.hikari;
+package me.pengu.ventis.connection.implementation.sql.connection.hikari;
 
 import com.zaxxer.hikari.HikariConfig;
 

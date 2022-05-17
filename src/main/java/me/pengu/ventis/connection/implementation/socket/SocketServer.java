@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger.implementation.socket;
+package me.pengu.ventis.connection.implementation.socket;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -8,21 +8,21 @@ import java.util.concurrent.Future;
 
 public class SocketServer implements Runnable {
 
-    private final SocketMessenger messenger;
+    private final SocketConnection connection;
     private ServerSocket serverSocket;
 
     private final Future<?> runnable;
 
-    public SocketServer(SocketMessenger messenger) {
-        this.messenger = messenger;
+    public SocketServer(SocketConnection connection) {
+        this.connection = connection;
         this.setupSocket();
 
-        this.runnable = this.messenger.getVentis().getExecutor().submit(this);
+        this.runnable = this.connection.getVentis().getExecutor().submit(this);
     }
 
     private void setupSocket() {
         try {
-            this.serverSocket = new ServerSocket(this.messenger.getConfig().getSocketConfig().getPort());
+            this.serverSocket = new ServerSocket(this.connection.getConfig().getSocketConfig().getPort());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,18 +30,18 @@ public class SocketServer implements Runnable {
 
     @Override
     public void run() {
-        while (this.messenger.isConnected()) {
+        while (this.connection.isConnected()) {
             try (Socket socket = serverSocket.accept(); DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
                 String channel = input.readUTF();
-                if (!this.messenger.getChannel().equals(channel)) return;
+                if (!this.connection.getChannel().equals(channel)) return;
 
                 String message = input.readUTF();
 
-                if (this.messenger.getConfig().getSocketConfig().isAuth()) {
+                if (this.connection.getConfig().getSocketConfig().isAuth()) {
                     String password = input.readUTF();
 
-                    if (!password.equals(this.messenger.getConfig().getSocketConfig().getPassword())) {
+                    if (!password.equals(this.connection.getConfig().getSocketConfig().getPassword())) {
                         throw new RuntimeException(
                                 "Attempted Un-authenticated packet sent on channel " + channel + ":\n" +
                                         "Address: " + socket.getInetAddress().getHostAddress() + "\n" +
@@ -52,7 +52,7 @@ public class SocketServer implements Runnable {
                     }
                 }
 
-                this.messenger.handleMessage(channel, message);
+                this.connection.handleMessage(channel, message);
             } catch (IOException e) {
                 e.printStackTrace();
             }

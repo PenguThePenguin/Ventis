@@ -1,9 +1,9 @@
-package me.pengu.ventis.messenger.implementation.sql.connection.hikari;
+package me.pengu.ventis.connection.implementation.sql.connection.hikari;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import me.pengu.ventis.messenger.config.SqlConfig;
-import me.pengu.ventis.messenger.implementation.sql.connection.SqlConnection;
+import me.pengu.ventis.connection.config.SqlConfig;
+import me.pengu.ventis.connection.implementation.sql.connection.SqlConnection;
 
 import java.sql.Connection;
 import java.sql.SQLException;

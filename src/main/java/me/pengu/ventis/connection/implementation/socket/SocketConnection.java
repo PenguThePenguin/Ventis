@@ -1,8 +1,8 @@
-package me.pengu.ventis.messenger.implementation.socket;
+package me.pengu.ventis.connection.implementation.socket;
 
 import lombok.Getter;
 import me.pengu.ventis.Ventis;
-import me.pengu.ventis.messenger.Messenger;
+import me.pengu.ventis.connection.Connection;
 import me.pengu.ventis.packet.Packet;
 
 import java.io.DataOutputStream;
@@ -11,15 +11,15 @@ import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
 
 @Getter
-public class SocketMessenger extends Messenger {
+public class SocketConnection extends Connection {
 
     private final String channel;
     private final SocketServer socketServer;
 
-    public SocketMessenger(Ventis ventis) {
+    public SocketConnection(Ventis ventis) {
         super(ventis);
 
-        this.channel = Messenger.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
+        this.channel = Connection.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
         this.socketServer = new SocketServer(this);
     }
 

@@ -3,11 +3,11 @@ Ventis is an asynchronous, clean and optimized API made for the Redis [PubSub](h
 
 ## Examples
 
-### Setup a Ventis and a Messenger instance:
+### Setup a Ventis and a Connection:
 ```java
         VentisConfig config = VentisConfig.builder()
                 .context(new JacksonContext()) // You can use any serializer, even create your own!
-                .messengerType("redis")
+                .connectionType("redis")
                 .channel("bukkit")
                 .redisConfig(
                         RedisConfig.builder()
@@ -17,14 +17,13 @@ Ventis is an asynchronous, clean and optimized API made for the Redis [PubSub](h
                 ).build();
         
         Ventis ventis = new Ventis(config);
-		
-        Messenger messenger = ventis.getMessenger();
+        Connection connection = ventis.getConnection();
 ```
 
 ### Register listener + Send a Packet:
 ```java
         ventis.registerListener(new ExampleListener());
-        messenger.sendPacket(new ExamplePacket(), "channel");
+        connection.sendPacket(new ExamplePacket(), "channel");
 ```
 
 ### Create a packet

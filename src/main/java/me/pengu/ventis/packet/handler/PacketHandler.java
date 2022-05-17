@@ -1,6 +1,6 @@
 package me.pengu.ventis.packet.handler;
 
-import me.pengu.ventis.messenger.Messenger;
+import me.pengu.ventis.connection.Connection;
 import me.pengu.ventis.packet.listener.PacketListener;
 
 import java.lang.annotation.ElementType;
@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 public @interface PacketHandler {
 
     /**
-     * This provides the {@link Messenger}
+     * This provides the {@link Connection}
      * an array of channels to listen for.
      */
     String[] channels() default {};

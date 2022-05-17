@@ -1,6 +1,6 @@
-package me.pengu.ventis.messenger.implementation.sql.connection;
+package me.pengu.ventis.connection.implementation.sql.connection;
 
-import me.pengu.ventis.messenger.config.SqlConfig;
+import me.pengu.ventis.connection.config.SqlConfig;
 
 import java.sql.Connection;
 import java.sql.SQLException;

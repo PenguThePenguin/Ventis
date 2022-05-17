@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger.implementation.sql.connection.file;
+package me.pengu.ventis.connection.implementation.sql.connection.file;
 
 import lombok.AllArgsConstructor;
 

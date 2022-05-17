@@ -3,10 +3,10 @@ package me.pengu.ventis;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
 import lombok.Setter;
-import me.pengu.ventis.messenger.Messenger;
-import me.pengu.ventis.messenger.implementation.redis.RedisMessenger;
-import me.pengu.ventis.messenger.implementation.socket.SocketMessenger;
-import me.pengu.ventis.messenger.implementation.sql.SqlMessenger;
+import me.pengu.ventis.connection.Connection;
+import me.pengu.ventis.connection.implementation.redis.RedisConnection;
+import me.pengu.ventis.connection.implementation.socket.SocketConnection;
+import me.pengu.ventis.connection.implementation.sql.SqlConnection;
 import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.handler.PacketHandler;
 import me.pengu.ventis.packet.listener.PacketListener;
@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 public class Ventis {
 
     private VentisConfig config;
-    private Messenger messenger;
+    private Connection connection;
 
     private final ScheduledThreadPoolExecutor executor;
     private final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
@@ -39,17 +39,17 @@ public class Ventis {
      * @param config selected config options {@link VentisConfig}
      */
     public Ventis(VentisConfig config) {
-        this(config, config.getMessengerType());
+        this(config, config.getConnectionType());
     }
 
     /**
      * Ventis instance.
      * @param config selected config options {@link VentisConfig}
-     * @param messengerType messenger type to initialize
+     * @param connectionType connection type to initialize
      */
-    public Ventis(VentisConfig config, String messengerType) {
+    public Ventis(VentisConfig config, String connectionType) {
         this.config = config;
-        this.messenger = this.getMessagingFor(messengerType);
+        this.connection = this.getConnectionFor(connectionType);
 
         this.executor = new ScheduledThreadPoolExecutor(1,
                 new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Ventis - Packet Thread - %d").build()
@@ -57,19 +57,19 @@ public class Ventis {
         this.packetListeners = new ConcurrentHashMap<>();
     }
 
-    public Messenger getMessagingFor(String messengerType) {
-        if (messengerType == null || messengerType.isEmpty()) return null;
+    public Connection getConnectionFor(String connectionType) {
+        if (connectionType == null || connectionType.isEmpty()) return null;
 
-        switch (messengerType.toLowerCase()) {
+        switch (connectionType.toLowerCase()) {
             case "redis":
-                return new RedisMessenger(this);
+                return new RedisConnection(this);
             case "sql":
-                return new SqlMessenger(this);
+                return new SqlConnection(this);
             case "socket":
-                return new SocketMessenger(this);
+                return new SocketConnection(this);
         }
 
-        throw new IllegalArgumentException("Invalid provided messenger " + messengerType);
+        throw new IllegalArgumentException("Invalid provided connection " + connectionType);
     }
 
     /**

@@ -1,15 +1,14 @@
-package me.pengu.ventis.messenger.implementation.sql;
+package me.pengu.ventis.connection.implementation.sql;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.pengu.ventis.Ventis;
-import me.pengu.ventis.messenger.Messenger;
-import me.pengu.ventis.messenger.config.SqlConfig;
-import me.pengu.ventis.messenger.implementation.sql.tasks.SqlCheckMessagesTask;
-import me.pengu.ventis.messenger.implementation.sql.tasks.SqlCleanupTask;
+import me.pengu.ventis.connection.Connection;
+import me.pengu.ventis.connection.config.SqlConfig;
+import me.pengu.ventis.connection.implementation.sql.tasks.SqlCheckMessagesTask;
+import me.pengu.ventis.connection.implementation.sql.tasks.SqlCleanupTask;
 import me.pengu.ventis.packet.Packet;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
@@ -17,11 +16,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Sql Messenger
- * Extends {@link Messenger} for packet handling.
+ * Sql Connection
+ * Extends {@link Connection} for packet handling.
  */
 @Getter @Setter
-public class SqlMessenger extends Messenger {
+public class SqlConnection extends Connection {
 
     private final SqlConfig sqlConfig;
     private final String tableName;
@@ -33,15 +32,15 @@ public class SqlMessenger extends Messenger {
     private long lastId = 0;
 
     /**
-     * Sql Messenger instance.
+     * Sql Connection instance.
      *
      * @param ventis {@link Ventis} instance
      */
-    public SqlMessenger(Ventis ventis) {
+    public SqlConnection(Ventis ventis) {
         super(ventis);
 
         this.sqlConfig = this.ventis.getConfig().getSqlConfig();
-        this.tableName = Messenger.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
+        this.tableName = Connection.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
 
         this.sqlConfig.getConnection().load(this.sqlConfig);
 
@@ -61,7 +60,7 @@ public class SqlMessenger extends Messenger {
         return CompletableFuture.runAsync(() -> {
             if (this.checkLock()) return;
 
-            try (Connection connection = getConnection()) {
+            try (java.sql.Connection connection = getConnection()) {
                 try (PreparedStatement ps = connection.prepareStatement("INSERT INTO `" + getTableName() + "` (`time`, 'channel' `message`) VALUES(NOW(), ?, ?)")) {
                     ps.setString(1, packet.toString(this.config.getContext()));
                     ps.setString(2, channel);
@@ -81,7 +80,7 @@ public class SqlMessenger extends Messenger {
      * @return the {@link SqlConfig}'s provided connection
      * @throws SQLException when the database isn't active
      */
-    public Connection getConnection() throws SQLException {
+    public java.sql.Connection getConnection() throws SQLException {
         return this.sqlConfig.getConnection().getConnection();
     }
 
@@ -104,7 +103,7 @@ public class SqlMessenger extends Messenger {
     /**
      * Cleans up this sql instance.
      *
-     * @see Messenger#close()
+     * @see Connection#close()
      */
     @Override
     public void close() {

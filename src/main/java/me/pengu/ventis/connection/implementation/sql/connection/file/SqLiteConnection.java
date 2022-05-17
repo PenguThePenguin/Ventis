@@ -1,4 +1,4 @@
-package me.pengu.ventis.messenger.implementation.sql.connection.file;
+package me.pengu.ventis.connection.implementation.sql.connection.file;
 
 import java.lang.reflect.Constructor;
 import java.nio.file.Path;
@@ -25,7 +25,7 @@ public class SqLiteConnection extends FileConnection {
     }
 
     @Override
-    public Connection createConnection(Path file) throws SQLException {
+    public Connection createConnection(Path file) {
         try {
             return (Connection) this.connectionConstructor.newInstance("jdbc:sqlite:" + file.toString(), file.toString(), new Properties());
         } catch (Exception e) {

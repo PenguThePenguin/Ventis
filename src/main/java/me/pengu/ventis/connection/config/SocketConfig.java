@@ -1,17 +1,17 @@
-package me.pengu.ventis.messenger.config;
+package me.pengu.ventis.connection.config;
 
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
-import me.pengu.ventis.messenger.implementation.redis.RedisMessenger;
-import me.pengu.ventis.messenger.implementation.socket.Server;
+import me.pengu.ventis.connection.implementation.redis.RedisConnection;
+import me.pengu.ventis.connection.implementation.socket.Server;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Socket Config.
- * Provides {@link RedisMessenger} with the provided options
+ * Provides {@link RedisConnection} with the provided options
  */
 @Getter @Builder
 public class SocketConfig {

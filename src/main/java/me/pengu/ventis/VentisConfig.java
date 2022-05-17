@@ -6,9 +6,9 @@ import lombok.Builder.Default;
 import lombok.Getter;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.context.impl.GsonContext;
-import me.pengu.ventis.messenger.config.RedisConfig;
-import me.pengu.ventis.messenger.config.SocketConfig;
-import me.pengu.ventis.messenger.config.SqlConfig;
+import me.pengu.ventis.connection.config.RedisConfig;
+import me.pengu.ventis.connection.config.SocketConfig;
+import me.pengu.ventis.connection.config.SqlConfig;
 
 /**
  * Ventis Config.
@@ -17,7 +17,7 @@ import me.pengu.ventis.messenger.config.SqlConfig;
 @Getter @Builder
 public class VentisConfig {
 
-    @Default private String messengerType = "redis";
+    @Default private String connectionType = "redis";
 
     @Default private VentisContext context = new GsonContext();
     @NotNull private String channel;
