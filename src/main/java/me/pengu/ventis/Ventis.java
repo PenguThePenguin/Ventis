@@ -1,6 +1,7 @@
 package me.pengu.ventis;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.internal.Primitives;
 import lombok.Getter;
 import lombok.Setter;
 import me.pengu.ventis.connection.Connection;
@@ -11,6 +12,7 @@ import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.handler.PacketHandler;
 import me.pengu.ventis.packet.listener.PacketListener;
 import me.pengu.ventis.packet.listener.PacketListenerData;
+import org.checkerframework.checker.units.qual.C;
 
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
@@ -37,6 +39,7 @@ public class Ventis {
 
     /**
      * Ventis instance.
+     *
      * @param config selected config options {@link VentisConfig}
      */
     public Ventis(VentisConfig config) {
@@ -45,7 +48,8 @@ public class Ventis {
 
     /**
      * Ventis instance.
-     * @param config selected config options {@link VentisConfig}
+     *
+     * @param config         selected config options {@link VentisConfig}
      * @param connectionType connection type to initialize
      */
     public Ventis(VentisConfig config, String connectionType) {
@@ -53,7 +57,7 @@ public class Ventis {
 
         this.connections = new HashMap<>();
         if (connectionType != null && !connectionType.isEmpty()) {
-            this.register(this.getConnectionFor(connectionType));
+            this.registerConnection(this.getConnectionFor(connectionType));
         }
 
         this.executor = new ScheduledThreadPoolExecutor(1,
@@ -62,6 +66,12 @@ public class Ventis {
         this.packetListeners = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Gets the connection type from a string.
+     *
+     * @param connectionType type to use
+     * @return the Connection instance
+     */
     public Connection getConnectionFor(String connectionType) {
         switch (connectionType.toLowerCase()) {
             case "redis":
@@ -72,15 +82,44 @@ public class Ventis {
                 return new SocketConnection(this);
         }
 
-        throw new IllegalArgumentException("Invalid provided connection " + connectionType);
+        throw new IllegalArgumentException("Invalid provided connection type " + connectionType);
     }
 
-    public void register(Connection connection) {
+    /**
+     * Registers a connection.
+     *
+     * @param connection connection instance to register
+     */
+    public void registerConnection(Connection connection) {
         this.connections.put(connection.getName(), connection);
+    }
+
+
+    /**
+     * Gets a connection type from its name and class
+     *
+     * @param name     The name of the connection.
+     * @param classOfT the class of the connection type.
+     * @return The connection instance.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Connection> T getConnection(String name, Class<T> classOfT) {
+        return (T) this.getConnection(name).getClass().cast(classOfT);
+    }
+
+    /**
+     * Gets a connection type from its name
+     *
+     * @param name The name of the connection.
+     * @return The connection instance.
+     */
+    public Connection getConnection(String name) {
+        return this.connections.get(name);
     }
 
     /**
      * Registers a listener as well as its packets.
+     *
      * @param packetListener listener instance to register
      */
     public void registerListener(PacketListener packetListener) {
@@ -108,6 +147,9 @@ public class Ventis {
         }
     }
 
+    /**
+     * Cleans up this ventis instance.
+     */
     public void close() {
         this.executor.shutdown();
         try {

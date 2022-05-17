@@ -29,16 +29,23 @@ public abstract class Connection {
 
     public boolean connected;
 
-    public Connection(Ventis ventis, String name, VentisConfig ventisConfig) {
+    /**
+     * Connection instance.
+     *
+     * @param ventis ventis instance to use
+     * @param name   the name of the connection type
+     */
+    public Connection(Ventis ventis, String name) {
         this.ventis = ventis;
         this.name = name;
         this.config = this.ventis.getConfig();
 
-        this.ventis.register(this);
+        this.ventis.registerConnection(this);
     }
 
     /**
      * Sends a packet.
+     *
      * @param packet packet to send
      * @return a future to manipulate the result of the operation
      */
@@ -48,18 +55,18 @@ public abstract class Connection {
 
     /**
      * Sends a packet.
-     * @param packet packet to send
-     * @param channel redis channel to use
      *
+     * @param packet  packet to send
+     * @param channel redis channel to use
      * @return a future to manipulate the result of the operation
      */
     public abstract CompletableFuture<Void> sendPacket(Packet packet, String channel);
 
     /**
      * De-Serializes {@param message} data using provided {@link VentisContext}'s deserializer
+     *
      * @param channel channel to listen for
      * @param message provided data in form of a String
-     *
      * @return a boolean to check if packet is valid
      */
     public boolean handleMessage(String channel, String message) {
@@ -97,6 +104,7 @@ public abstract class Connection {
 
     /**
      * Cleans up this connection instance.
+     * @see Ventis#close()
      */
     public void close() {
         if (!this.connected) return;
@@ -105,5 +113,3 @@ public abstract class Connection {
         this.connected = false;
     }
 }
-
-
