@@ -56,6 +56,6 @@ public class SqlCheckMessagesTask implements Runnable {
     }
 
     public void close() {
-        if (this.task != null) this.task.cancel(true);
+        if (!this.task.isCancelled()) this.task.cancel(true);
     }
 }

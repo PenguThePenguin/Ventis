@@ -1,7 +1,6 @@
 package me.pengu.ventis.messenger.implementation.sql.connection.file;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,7 +25,7 @@ public class H2Connection extends FileConnection {
     }
 
     @Override
-    public Connection createConnection(Path file) throws SQLException {
+    public Connection createConnection(Path file) {
         try {
             return (Connection) this.connectionConstructor.newInstance("jdbc:h2:" + file.toString(), new Properties());
         } catch (Exception e) {

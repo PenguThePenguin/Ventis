@@ -18,10 +18,9 @@ public class SqlConfig {
 
     @Default private SqlConnection connection = new MySqlConnection();
 
-    private String channel;
     private String address;
-
     private String database;
+
     private String username;
     private String password;
 

@@ -34,13 +34,14 @@ public class SqlMessenger extends Messenger {
 
     /**
      * Sql Messenger instance.
+     *
      * @param ventis {@link Ventis} instance
      */
     public SqlMessenger(Ventis ventis) {
         super(ventis);
 
         this.sqlConfig = this.ventis.getConfig().getSqlConfig();
-        this.tableName = Messenger.CHANNEL_PREFIX + this.sqlConfig.getChannel();
+        this.tableName = Messenger.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
 
         this.sqlConfig.getConnection().load(this.sqlConfig);
 
@@ -50,9 +51,9 @@ public class SqlMessenger extends Messenger {
 
     /**
      * Sends a packet.
-     * @param packet packet to send
-     * @param channel redis channel to use
      *
+     * @param packet  packet to send
+     * @param channel redis channel to use
      * @return a future to manipulate the result of the operation
      */
     @Override
@@ -76,6 +77,7 @@ public class SqlMessenger extends Messenger {
 
     /**
      * This configs current connection
+     *
      * @return the {@link SqlConfig}'s provided connection
      * @throws SQLException when the database isn't active
      */
@@ -85,6 +87,7 @@ public class SqlMessenger extends Messenger {
 
     /**
      * Checks if this lock is locked
+     *
      * @return if this is not connected
      */
     public boolean checkLock() {
@@ -100,6 +103,7 @@ public class SqlMessenger extends Messenger {
 
     /**
      * Cleans up this sql instance.
+     *
      * @see Messenger#close()
      */
     @Override

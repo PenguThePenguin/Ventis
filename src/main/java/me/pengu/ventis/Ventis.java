@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import me.pengu.ventis.messenger.Messenger;
 import me.pengu.ventis.messenger.implementation.redis.RedisMessenger;
+import me.pengu.ventis.messenger.implementation.socket.SocketMessenger;
+import me.pengu.ventis.messenger.implementation.sql.SqlMessenger;
 import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.handler.PacketHandler;
 import me.pengu.ventis.packet.listener.PacketListener;
@@ -62,9 +64,9 @@ public class Ventis {
             case "redis":
                 return new RedisMessenger(this);
             case "sql":
-                throw new UnsupportedOperationException(
-                        "Sql messaging is currently unsupported."
-                );
+                return new SqlMessenger(this);
+            case "socket":
+                return new SocketMessenger(this);
         }
 
         throw new IllegalArgumentException("Invalid provided messenger " + messengerType);

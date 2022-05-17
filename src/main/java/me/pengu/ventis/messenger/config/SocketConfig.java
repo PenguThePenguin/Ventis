@@ -4,18 +4,22 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import me.pengu.ventis.messenger.implementation.redis.RedisMessenger;
-import redis.clients.jedis.Protocol;
+import me.pengu.ventis.messenger.implementation.socket.Server;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Redis Config.
+ * Socket Config.
  * Provides {@link RedisMessenger} with the provided options
  */
 @Getter @Builder
-public class RedisConfig {
+public class SocketConfig {
 
-    @Default private int timeout = Protocol.DEFAULT_TIMEOUT;
-    @Default private String address = "127.0.0.1";
-    @Default private int port = 6379;
+    @Default List<Server> servers = new ArrayList<>();
+
+    private String address;
+    private int port;
 
     private boolean auth;
     private String password;

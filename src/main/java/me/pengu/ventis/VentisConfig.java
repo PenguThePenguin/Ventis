@@ -7,6 +7,7 @@ import lombok.Getter;
 import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.context.impl.GsonContext;
 import me.pengu.ventis.messenger.config.RedisConfig;
+import me.pengu.ventis.messenger.config.SocketConfig;
 import me.pengu.ventis.messenger.config.SqlConfig;
 
 /**
@@ -23,5 +24,6 @@ public class VentisConfig {
 
     private RedisConfig redisConfig;
     private SqlConfig sqlConfig;
+    private SocketConfig socketConfig;
 
 }

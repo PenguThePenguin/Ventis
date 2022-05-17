@@ -1,13 +1,11 @@
 package me.pengu.ventis.messenger.implementation.sql.tasks;
 
 import me.pengu.ventis.messenger.implementation.sql.SqlMessenger;
-import me.pengu.ventis.packet.handler.PacketHandler;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * Cleans up Sql packets that are more than a minute old
@@ -40,6 +38,6 @@ public class SqlCleanupTask implements Runnable {
     }
 
     public void close() {
-        if (this.task != null) this.task.cancel(true);
+        if (!this.task.isCancelled()) this.task.cancel(true);
     }
 }

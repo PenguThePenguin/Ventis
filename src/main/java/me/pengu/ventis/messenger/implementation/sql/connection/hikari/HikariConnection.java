@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 public abstract class HikariConnection implements SqlConnection {
 
-    private SqlConfig config;
+    public SqlConfig config;
 
     private HikariDataSource hikari;
     private final HikariConfig hikariConfig;
