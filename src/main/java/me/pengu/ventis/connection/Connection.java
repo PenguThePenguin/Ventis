@@ -10,6 +10,7 @@ import me.pengu.ventis.packet.listener.PacketListenerData;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -73,15 +74,15 @@ public abstract class Connection {
         // using indexOf as it has better performance than split
         String packetName = message.substring(0, messageIndex);
 
-        Map.Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry =
+        Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry =
                 this.getVentis().getPacketListeners().get(packetName);
         if (packetListEntry == null) return false;
 
         String data = message.substring(messageIndex + Connection.SPLIT_REGEX.length());
-        Class<? extends Packet> clazz = packetListEntry.getKey();
+        Class<? extends Packet> packetClass = packetListEntry.getKey();
 
-        Packet packet = this.getConfig().getContext().deSerialize(data, clazz);
-        if (!clazz.getName().equalsIgnoreCase(packet.getClassName())) return false; // Invalid packet, end.
+        Packet packet = this.getConfig().getContext().deSerialize(data, packetClass);
+        if (!packetClass.getName().equalsIgnoreCase(packet.getClassName())) return false; // Invalid packet, end.
 
         for (PacketListenerData packetListener : packetListEntry.getValue()) {
             if (packetListener.getChannels().length > 0 && !Arrays.asList(packetListener.getChannels())
@@ -90,7 +91,6 @@ public abstract class Connection {
 
             try {
                 packetListener.getMethod().invoke(packetListener.getInstance(), packet);
-                return true;
             } catch (Exception e) {
                 throw new RuntimeException(
                         String.format("Failed to parse %1$s because it has a invalid packet signature (%2$s).",
@@ -98,7 +98,8 @@ public abstract class Connection {
                 );
             }
         }
-        return false;
+
+        return true;
     }
 
     /**

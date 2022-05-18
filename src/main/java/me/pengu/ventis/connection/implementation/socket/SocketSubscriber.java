@@ -2,42 +2,30 @@ package me.pengu.ventis.connection.implementation.socket;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Future;
 
-public class SocketServer implements Runnable {
+public class SocketSubscriber implements Runnable {
 
     private final SocketConnection connection;
-    private ServerSocket serverSocket;
-
     private final Future<?> runnable;
 
-    public SocketServer(SocketConnection connection) {
+    public SocketSubscriber(SocketConnection connection) {
         this.connection = connection;
-        this.setupSocket();
-
         this.runnable = this.connection.getVentis().getExecutor().submit(this);
-    }
-
-    private void setupSocket() {
-        try {
-            this.serverSocket = new ServerSocket(this.connection.getSocketConfig().getPort());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void run() {
         while (this.connection.isConnected()) {
-            try (Socket socket = serverSocket.accept();
+            try (Socket socket = this.connection.getSocket().accept();
                  DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
-                String channel = input.readUTF();
-                if (!this.connection.getChannel().equals(channel)) return;
+                String socketPrefix = input.readUTF();
+                if (!this.connection.getConfig().getChannel().equals(socketPrefix)) return;
 
-                String message = input.readUTF();
+                String channel = input.readUTF();
+                String packet = input.readUTF();
 
                 if (this.connection.getSocketConfig().isAuth()) {
                     String password = input.readUTF();
@@ -53,7 +41,7 @@ public class SocketServer implements Runnable {
                     }
                 }
 
-                this.connection.handleMessage(channel, message);
+                this.connection.handleMessage(channel, packet);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -62,13 +50,5 @@ public class SocketServer implements Runnable {
 
     public void close() {
         if (!this.runnable.isCancelled()) this.runnable.cancel(true);
-
-        if (this.serverSocket != null && !this.serverSocket.isClosed()) {
-            try {
-                this.serverSocket.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

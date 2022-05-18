@@ -2,7 +2,6 @@ package me.pengu.ventis.connection.implementation.rabbitmq;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
@@ -13,9 +12,7 @@ import me.pengu.ventis.connection.Connection;
 import me.pengu.ventis.connection.config.RabbitMQConfig;
 import me.pengu.ventis.packet.Packet;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeoutException;
 
 @Getter
 public class RabbitMQConnection extends Connection {
@@ -34,10 +31,10 @@ public class RabbitMQConnection extends Connection {
     private Channel channel;
 
     public RabbitMQConnection(Ventis ventis, RabbitMQConfig rabbitMQConfig) {
-        super(ventis, "RabbitMQ");
+        super(ventis, "rabbitmq");
 
         this.rabbitMQConfig = rabbitMQConfig;
-        this.routingKey = Connection.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
+        this.routingKey = CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
 
         this.subscriber = new RabbitMQSubscriber(this);
         this.ventis.getExecutor().submit(this::connect);
@@ -71,7 +68,10 @@ public class RabbitMQConnection extends Connection {
 
             try {
                 ByteArrayDataOutput output = ByteStreams.newDataOutput();
+
+                output.writeUTF(CHANNEL_PREFIX + channel);
                 output.writeUTF(packet.toString(this.config.getContext()));
+
                 this.channel.basicPublish(EXCHANGE_NAME, this.routingKey, new BasicProperties.Builder().build(), output.toByteArray());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -82,8 +82,8 @@ public class RabbitMQConnection extends Connection {
     @Override
     public void close() {
         try {
-            this.channel.close();
-            this.connection.close();
+            if (this.channel.isOpen()) this.channel.close();
+            if (this.connection.isOpen()) this.connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

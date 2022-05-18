@@ -39,8 +39,8 @@ public class SqlCheckMessagesTask implements Runnable {
                         long id = rs.getLong("id");
                         this.connection.setLastId(Math.max(this.connection.getLastId(), id));
 
-                        String message = rs.getString("message");
-                        String channel = rs.getString("channel");
+                        String message = rs.getString("channel");
+                        String channel = rs.getString("message");
 
                         this.connection.handleMessage(channel, message);
                     }

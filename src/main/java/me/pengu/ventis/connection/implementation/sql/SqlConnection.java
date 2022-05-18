@@ -62,8 +62,8 @@ public class SqlConnection extends Connection {
 
             try (java.sql.Connection connection = getConnection()) {
                 try (PreparedStatement ps = connection.prepareStatement("INSERT INTO `" + getTableName() + "` (`time`, 'channel' `message`) VALUES(NOW(), ?, ?)")) {
-                    ps.setString(1, packet.toString(this.config.getContext()));
-                    ps.setString(2, channel);
+                    ps.setString(1, CHANNEL_PREFIX + channel);
+                    ps.setString(2, packet.toString(this.config.getContext()));
                     ps.execute();
                 }
             } catch (Exception e) {

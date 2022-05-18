@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import me.pengu.ventis.connection.implementation.redis.RedisConnection;
-import me.pengu.ventis.connection.implementation.socket.Server;
+import me.pengu.ventis.connection.implementation.socket.data.Server;
 
 import java.util.ArrayList;
 import java.util.List;

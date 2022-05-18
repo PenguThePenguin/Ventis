@@ -8,6 +8,7 @@ import me.pengu.ventis.packet.Packet;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.exceptions.JedisException;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -63,23 +64,19 @@ public class RedisConnection extends Connection {
         if (!this.isConnected()) return null;
 
         Jedis jedis = this.jedisPool.getResource();
-        T result = null;
 
         try {
-            result = redisCommand.apply(jedis);
+            return redisCommand.apply(jedis);
         } catch (Exception e) {
-            e.printStackTrace();
-
-            if (jedis != null) {
-                this.jedisPool.returnBrokenResource(jedis);
-            }
+            this.jedisPool.returnBrokenResource(jedis);
+            jedis = null; // To make sure that the jedis instance is not returned to the pool again.
+            
+            throw new JedisException(e);
         } finally {
             if (jedis != null) {
                 this.jedisPool.returnResource(jedis);
             }
         }
-
-        return result;
     }
 
     /**

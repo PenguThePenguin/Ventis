@@ -21,13 +21,11 @@ public class JacksonContext implements VentisContext {
 
     @Override
     public String serialize(Packet packet) {
-        String serialized = "";
         try {
-            serialized = this.mapper.writeValueAsString(packet);
+            return this.mapper.writeValueAsString(packet);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return serialized;
     }
 
     @Override

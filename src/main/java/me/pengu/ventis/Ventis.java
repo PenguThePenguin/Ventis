@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 
 /**
  * Ventis, a simple and clean packet api.
- * Currently, supporting redis messaging.
+ * Supporting: redis, sql, socket and rabbitMq.
  */
 @Getter @Setter
 public class Ventis {
@@ -36,7 +36,6 @@ public class Ventis {
 
     private final ScheduledThreadPoolExecutor executor;
     private final Map<String, Entry<Class<? extends Packet>, List<PacketListenerData>>> packetListeners;
-
 
     /**
      * Ventis instance.
