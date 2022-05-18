@@ -1,5 +1,6 @@
 package me.pengu.ventis.connection.implementation.sql.tasks;
 
+import me.pengu.ventis.Ventis;
 import me.pengu.ventis.connection.implementation.sql.SqlConnection;
 
 import java.sql.Connection;
@@ -10,14 +11,19 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Checks the provided Sql database for any packet updates
- * - every second
+ * Checks the provided Sql database for any packet updates every second
+ * Implements {@link Runnable} for a task to check for data.
  */
 public class SqlCheckMessagesTask implements Runnable {
 
     private final SqlConnection connection;
     private final ScheduledFuture<?> task;
 
+    /**
+     * Sql Check Messages instance.
+     *
+     * @param connection {@link SqlConnection} instance
+     */
     public SqlCheckMessagesTask(SqlConnection connection) {
         this.connection = connection;
         this.task = this.connection.getVentis().getExecutor().scheduleAtFixedRate(
@@ -25,6 +31,9 @@ public class SqlCheckMessagesTask implements Runnable {
         );
     }
 
+    /**
+     * An implementation of {@link Runnable#run()}.
+     */
     @Override
     public void run() {
         if (this.connection.checkLock()) return;
@@ -53,6 +62,9 @@ public class SqlCheckMessagesTask implements Runnable {
         }
     }
 
+    /**
+     * Cleans up this task.
+     */
     public void close() {
         if (!this.task.isCancelled()) this.task.cancel(true);
     }

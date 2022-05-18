@@ -1,23 +1,34 @@
 # Ventis
-Ventis is an asynchronous, clean and optimized API made for the Redis [PubSub](https://redis.io/docs/manual/pubsub/) system
+Ventis is an asynchronous, clean and optimized api made for sending packets across servers.
+
+## Support
+Ventis currently supports multiple connection types:
+
+- [Sql](https://www.mysql.com/)
+- [Redis](https://redis.io/)
+- [RabbitMQ](https://www.rabbitmq.com/)
+- [Java's Socket](https://docs.oracle.com/javase/7/docs/api/java/net/Socket.html)
 
 ## Examples
 
-### Setup a Ventis and a Connection:
+### Setup Ventis and register a Connection:
 ```java
         VentisConfig config = VentisConfig.builder()
                 .context(new JacksonContext()) // You can use any serializer, even create your own!
-                .connectionType("redis")
                 .channel("bukkit")
-                .redisConfig(
-                        RedisConfig.builder()
-                                .address("localhost")
-                                .port(6379)
-                                .build()
-                ).build();
-        
+                .build();
+
         Ventis ventis = new Ventis(config);
-        Connection connection = ventis.getConnection();
+
+        RedisConfig redisConfig = RedisConfig.builder()
+                .address("localhost")
+                .port(6379)
+                .build();
+
+        RedisConnection connection = new RedisConnection(ventis, redisConfig);
+        
+        // Get a connection from its class:
+        RedisConnection redisConnection = ventis.getConnection("redis", RedisConnection.class); 
 ```
 
 ### Register listener + Send a Packet:

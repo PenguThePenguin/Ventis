@@ -35,6 +35,7 @@ public class SqlConnection extends Connection {
      * Sql Connection instance.
      *
      * @param ventis {@link Ventis} instance
+     * @param sqlConfig the provided options for this connection
      */
     public SqlConnection(Ventis ventis, SqlConfig sqlConfig) {
         super(ventis, "sql");
@@ -52,7 +53,7 @@ public class SqlConnection extends Connection {
      * Sends a packet.
      *
      * @param packet  packet to send
-     * @param channel redis channel to use
+     * @param channel sql channel to use
      * @return a future to manipulate the result of the operation
      */
     @Override
@@ -110,10 +111,7 @@ public class SqlConnection extends Connection {
         this.cleanupTask.close();
         this.messagesTask.close();
 
-        if (this.sqlConfig.getConnection() != null) {
-            this.sqlConfig.getConnection().close();
-        }
-
+        this.sqlConfig.getConnection().close();
         super.close();
     }
 }

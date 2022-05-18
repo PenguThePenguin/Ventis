@@ -14,6 +14,10 @@ import me.pengu.ventis.packet.Packet;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * RabbitMQ Connection
+ * Extends {@link Connection} for packet handling.
+ */
 @Getter
 public class RabbitMQConnection extends Connection {
 
@@ -30,6 +34,11 @@ public class RabbitMQConnection extends Connection {
     private com.rabbitmq.client.Connection connection;
     private Channel channel;
 
+    /**
+     * RabbitMQ Connection instance.
+     * @param ventis {@link Ventis} instance
+     * @param rabbitMQConfig the provided options for this connection
+     */
     public RabbitMQConnection(Ventis ventis, RabbitMQConfig rabbitMQConfig) {
         super(ventis, "rabbitmq");
 
@@ -40,6 +49,9 @@ public class RabbitMQConnection extends Connection {
         this.ventis.getExecutor().submit(this::connect);
     }
 
+    /**
+     * Sets up this connection to RabbitMQ
+     */
     private void connect() {
         try {
             this.connectionFactory = new ConnectionFactory();
@@ -61,6 +73,13 @@ public class RabbitMQConnection extends Connection {
         }
     }
 
+    /**
+     * Sends a packet.
+     *
+     * @param packet  packet to send
+     * @param channel rabbitMQ channel to use
+     * @return a future to manipulate the result of the operation
+     */
     @Override
     public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
         return CompletableFuture.runAsync(() -> {
@@ -79,6 +98,10 @@ public class RabbitMQConnection extends Connection {
         }, this.getVentis().getExecutor());
     }
 
+    /**
+     * Cleans up this socket instance.
+     * @see Connection#close()
+     */
     @Override
     public void close() {
         try {

@@ -38,8 +38,8 @@ public abstract class Connection {
     public Connection(Ventis ventis, String name) {
         this.ventis = ventis;
         this.name = name;
-        this.config = this.ventis.getConfig();
 
+        this.config = this.ventis.getConfig();
         this.ventis.registerConnection(this);
     }
 
@@ -57,7 +57,7 @@ public abstract class Connection {
      * Sends a packet.
      *
      * @param packet  packet to send
-     * @param channel redis channel to use
+     * @param channel channel to use
      * @return a future to manipulate the result of the operation
      */
     public abstract CompletableFuture<Void> sendPacket(Packet packet, String channel);

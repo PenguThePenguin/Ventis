@@ -27,6 +27,7 @@ public class RedisConnection extends Connection {
     /**
      * Redis Connection instance.
      * @param ventis {@link Ventis} instance
+     * @param redisConfig the provided options for this connection
      */
     public RedisConnection(Ventis ventis, RedisConfig redisConfig) {
         super(ventis, "redis");
@@ -51,8 +52,7 @@ public class RedisConnection extends Connection {
         return CompletableFuture.runAsync(() ->
                 this.runCommand(redis ->
                         redis.publish(CHANNEL_PREFIX + channel, packet.toString(this.config.getContext()))
-                ), this.ventis.getExecutor()
-        );
+                ), this.ventis.getExecutor());
     }
 
     /**
@@ -70,7 +70,7 @@ public class RedisConnection extends Connection {
         } catch (Exception e) {
             this.jedisPool.returnBrokenResource(jedis);
             jedis = null; // To make sure that the jedis instance is not returned to the pool again.
-            
+
             throw new JedisException(e);
         } finally {
             if (jedis != null) {

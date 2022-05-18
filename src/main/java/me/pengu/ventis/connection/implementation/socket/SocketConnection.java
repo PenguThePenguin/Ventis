@@ -8,12 +8,15 @@ import me.pengu.ventis.connection.implementation.socket.data.Server;
 import me.pengu.ventis.packet.Packet;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Redis Connection
+ * Extends {@link Connection} for packet handling.
+ */
 @Getter
 public class SocketConnection extends Connection {
 
@@ -23,6 +26,11 @@ public class SocketConnection extends Connection {
     private final ServerSocket socket;
     private final SocketSubscriber subscriber;
 
+    /**
+     * Socket Connection instance.
+     * @param ventis {@link Ventis} instance
+     * @param socketConfig the provided options for this connection
+     */
     public SocketConnection(Ventis ventis, SocketConfig socketConfig) {
         super(ventis, "socket");
 
@@ -33,14 +41,26 @@ public class SocketConnection extends Connection {
         this.subscriber = new SocketSubscriber(this);
     }
 
+    /**
+     * Sets up this {@link ServerSocket} socket.
+     *
+     * @return the socket using the {@link SocketConfig}'s port.
+     */
     private ServerSocket setupSocket() {
         try {
             return new ServerSocket(this.getSocketConfig().getPort());
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Sends a packet.
+     * @param packet packet to send
+     * @param channel socket channel to use
+     *
+     @return a future to manipulate the result of the operation
+     */
     @Override
     public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
         return CompletableFuture.runAsync(() -> {
@@ -64,7 +84,10 @@ public class SocketConnection extends Connection {
         }, this.ventis.getExecutor());
     }
 
-
+    /**
+     * Cleans up this socket instance.
+     * @see Connection#close()
+     */
     @Override
     public void close() {
         this.subscriber.close();

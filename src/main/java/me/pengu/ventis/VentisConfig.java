@@ -14,8 +14,6 @@ import me.pengu.ventis.context.impl.GsonContext;
 @Getter @Builder
 public class VentisConfig {
 
-    @Default private String connectionType = "redis";
-
     @Default private VentisContext context = new GsonContext();
     @NotNull private String channel;
 

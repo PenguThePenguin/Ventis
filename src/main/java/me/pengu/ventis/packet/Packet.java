@@ -5,7 +5,7 @@ import me.pengu.ventis.context.VentisContext;
 import me.pengu.ventis.connection.Connection;
 
 /**
- * Represents data that can be sent through redis.
+ * Represents data that can be sent.
  * @see Connection#sendPacket(Packet)
  */
 @Data

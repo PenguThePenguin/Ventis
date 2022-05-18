@@ -9,12 +9,18 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Cleans up Sql packets that are more than a minute old
+ * Implements {@link Runnable} for a task to check for updates.
  */
 public class SqlCleanupTask implements Runnable {
 
     private final SqlConnection connection;
     private final ScheduledFuture<?> task;
 
+    /**
+     * Sql Cleanup instance.
+     *
+     * @param connection {@link SqlConnection} instance
+     */
     public SqlCleanupTask(SqlConnection connection) {
         this.connection = connection;
         this.task = this.connection.getVentis().getExecutor().scheduleAtFixedRate(
@@ -22,6 +28,9 @@ public class SqlCleanupTask implements Runnable {
         );
     }
 
+    /**
+     * An implementation of {@link Runnable#run()}.
+     */
     @Override
     public void run() {
         if (this.connection.checkLock()) return;
@@ -37,6 +46,9 @@ public class SqlCleanupTask implements Runnable {
         }
     }
 
+    /**
+     * Cleans up this task.
+     */
     public void close() {
         if (!this.task.isCancelled()) this.task.cancel(true);
     }

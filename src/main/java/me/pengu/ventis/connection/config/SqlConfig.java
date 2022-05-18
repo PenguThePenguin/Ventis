@@ -1,5 +1,6 @@
 package me.pengu.ventis.connection.config;
 
+import com.sun.istack.internal.NotNull;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import me.pengu.ventis.connection.implementation.sql.connection.hikari.MySqlConn
 @Getter @Builder
 public class SqlConfig {
 
-    @Default private SqlConnection connection = new MySqlConnection();
+    @NotNull @Default private SqlConnection connection = new MySqlConnection();
 
     private String address;
     private String database;
