@@ -46,7 +46,7 @@ public class RabbitMQConnection extends Connection {
         this.routingKey = CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
 
         this.subscriber = new RabbitMQSubscriber(this);
-        this.ventis.getExecutor().submit(this::connect);
+        this.connect();
     }
 
     /**
@@ -85,12 +85,12 @@ public class RabbitMQConnection extends Connection {
         return CompletableFuture.runAsync(() -> {
             if (!this.isConnected()) return;
 
+            ByteArrayDataOutput output = ByteStreams.newDataOutput();
+
+            output.writeUTF(CHANNEL_PREFIX + channel);
+            output.writeUTF(packet.toString(this.config.getContext()));
+
             try {
-                ByteArrayDataOutput output = ByteStreams.newDataOutput();
-
-                output.writeUTF(CHANNEL_PREFIX + channel);
-                output.writeUTF(packet.toString(this.config.getContext()));
-
                 this.channel.basicPublish(EXCHANGE_NAME, this.routingKey, new BasicProperties.Builder().build(), output.toByteArray());
             } catch (Exception e) {
                 e.printStackTrace();

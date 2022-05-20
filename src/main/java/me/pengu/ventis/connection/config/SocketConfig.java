@@ -19,7 +19,7 @@ public class SocketConfig {
     @Default List<Server> servers = new ArrayList<>();
 
     @Default private String address = "127.0.0.1";
-    private int port;
+    @Default private int port = 6868;
 
     private boolean auth;
     private String password;

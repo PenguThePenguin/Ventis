@@ -1,9 +1,6 @@
 package me.pengu.ventis.connection.implementation.socket;
 
 import me.pengu.ventis.Ventis;
-import me.pengu.ventis.connection.implementation.redis.RedisConnection;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPubSub;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -68,6 +65,8 @@ public class SocketSubscriber implements Runnable {
 
     /**
      * Cleans up this subscriber instance.
+     *
+     * @see SocketConnection#close()
      */
     public void close() {
         if (!this.runnable.isCancelled()) this.runnable.cancel(true);

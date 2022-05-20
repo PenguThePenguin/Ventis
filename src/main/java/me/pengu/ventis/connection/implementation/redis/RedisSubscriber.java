@@ -1,17 +1,15 @@
 package me.pengu.ventis.connection.implementation.redis;
 
-import lombok.Getter;
 import me.pengu.ventis.connection.Connection;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 /**
  * Redis Subscriber
- * Extends {@link JedisPubSub} for message handling.
+ * Extends {@link JedisPubSub} for packet handling.
  */
 public class RedisSubscriber extends JedisPubSub {
 
-    @Getter private boolean closed;
     private final RedisConnection connection;
 
     /**
@@ -44,14 +42,10 @@ public class RedisSubscriber extends JedisPubSub {
 
     /**
      * Cleans up this subscriber instance.
+     *
+     * @see RedisConnection#close()
      */
     public void close() {
-        if (this.isClosed()) return;
-
-        if (super.isSubscribed()) {
-            super.unsubscribe();
-        }
-
-        this.closed = true;
+        if (super.isSubscribed()) super.unsubscribe();
     }
 }

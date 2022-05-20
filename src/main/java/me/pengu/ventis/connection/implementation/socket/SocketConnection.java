@@ -28,7 +28,8 @@ public class SocketConnection extends Connection {
 
     /**
      * Socket Connection instance.
-     * @param ventis {@link Ventis} instance
+     *
+     * @param ventis       {@link Ventis} instance
      * @param socketConfig the provided options for this connection
      */
     public SocketConnection(Ventis ventis, SocketConfig socketConfig) {
@@ -56,10 +57,10 @@ public class SocketConnection extends Connection {
 
     /**
      * Sends a packet.
-     * @param packet packet to send
-     * @param channel socket channel to use
      *
-     @return a future to manipulate the result of the operation
+     * @param packet  packet to send
+     * @param channel socket channel to use
+     * @return a future to manipulate the result of the operation
      */
     @Override
     public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
@@ -86,6 +87,7 @@ public class SocketConnection extends Connection {
 
     /**
      * Cleans up this socket instance.
+     *
      * @see Connection#close()
      */
     @Override

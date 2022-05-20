@@ -74,9 +74,7 @@ public class RedisConnection extends Connection {
     public void close() {
         this.runCommand(Jedis::save);
 
-        if (!this.subscriber.isClosed()) {
-            this.subscriber.close();
-        }
+        this.subscriber.close();
 
         if (!this.jedisPool.isClosed()) {
             this.jedisPool.close();

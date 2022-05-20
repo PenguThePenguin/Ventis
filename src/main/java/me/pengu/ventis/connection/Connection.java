@@ -109,7 +109,7 @@ public abstract class Connection {
     public void close() {
         if (!this.connected) return;
 
-        this.ventis.close();
+        this.ventis.unregisterConnection(this);
         this.connected = false;
     }
 }

@@ -45,6 +45,8 @@ public class SqlCleanupTask implements Runnable {
 
     /**
      * Cleans up this task.
+     *
+     * @see SqlConnection#close()
      */
     public void close() {
         if (!this.task.isCancelled()) this.task.cancel(true);

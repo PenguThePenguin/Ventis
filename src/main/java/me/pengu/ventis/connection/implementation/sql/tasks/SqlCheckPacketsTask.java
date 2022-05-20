@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Checks the provided Sql database for any packet updates every second
  * Implements {@link Runnable} for a task to check for data.
  */
-public class SqlCheckMessagesTask implements Runnable {
+public class SqlCheckPacketsTask implements Runnable {
 
     private final SqlConnection connection;
     private final ScheduledFuture<?> task;
@@ -22,7 +22,7 @@ public class SqlCheckMessagesTask implements Runnable {
      *
      * @param connection {@link SqlConnection} instance
      */
-    public SqlCheckMessagesTask(SqlConnection connection) {
+    public SqlCheckPacketsTask(SqlConnection connection) {
         this.connection = connection;
         this.task = this.connection.getVentis().getExecutor().scheduleAtFixedRate(
                 this, 0L, 1L, TimeUnit.SECONDS
@@ -36,7 +36,7 @@ public class SqlCheckMessagesTask implements Runnable {
     public void run() {
         if (this.connection.checkLock()) return;
 
-        try (PreparedStatement ps = this.connection.prepareStatement("SELECT `id`, 'channel', `message`, FROM `" + this.connection.getTableName() + "` WHERE `id` > ? AND (NOW() - `time` < 30)")) {
+        try (PreparedStatement ps = this.connection.prepareStatement("SELECT `id`, 'channel', `packet`, FROM `" + this.connection.getTableName() + "` WHERE `id` > ? AND (NOW() - `time` < 30)")) {
             ps.setLong(1, this.connection.getLastId());
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -45,10 +45,10 @@ public class SqlCheckMessagesTask implements Runnable {
                     long id = rs.getLong("id");
                     this.connection.setLastId(Math.max(this.connection.getLastId(), id));
 
-                    String message = rs.getString("channel");
-                    String channel = rs.getString("message");
+                    String channel = rs.getString("channel");
+                    String packet = rs.getString("packet");
 
-                    this.connection.handleMessage(channel, message);
+                    this.connection.handleMessage(channel, packet);
                 }
             }
         } catch (SQLException e) {
@@ -60,6 +60,8 @@ public class SqlCheckMessagesTask implements Runnable {
 
     /**
      * Cleans up this task.
+     *
+     * @see SqlConnection#close()
      */
     public void close() {
         if (!this.task.isCancelled()) this.task.cancel(true);

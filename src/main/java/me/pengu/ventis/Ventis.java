@@ -10,11 +10,8 @@ import me.pengu.ventis.packet.listener.PacketListener;
 import me.pengu.ventis.packet.listener.PacketListenerData;
 
 import java.lang.reflect.Method;
+import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -56,6 +53,15 @@ public class Ventis {
      */
     public void registerConnection(Connection connection) {
         this.connections.put(connection.getName(), connection);
+    }
+
+    /**
+     * Un-registers a connection.
+     *
+     * @param connection instance to unregister
+     */
+    public void unregisterConnection(Connection connection) {
+        this.connections.remove(connection.getName());
     }
 
     /**

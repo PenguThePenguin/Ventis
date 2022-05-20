@@ -5,7 +5,7 @@ import lombok.Setter;
 import me.pengu.ventis.Ventis;
 import me.pengu.ventis.connection.Connection;
 import me.pengu.ventis.connection.config.SqlConfig;
-import me.pengu.ventis.connection.implementation.sql.tasks.SqlCheckMessagesTask;
+import me.pengu.ventis.connection.implementation.sql.tasks.SqlCheckPacketsTask;
 import me.pengu.ventis.connection.implementation.sql.tasks.SqlCleanupTask;
 import me.pengu.ventis.packet.Packet;
 
@@ -26,7 +26,7 @@ public class SqlConnection extends Connection {
     private final String tableName;
 
     private final SqlCleanupTask cleanupTask;
-    private final SqlCheckMessagesTask messagesTask;
+    private final SqlCheckPacketsTask packetsTask;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private long lastId = 0;
@@ -46,7 +46,7 @@ public class SqlConnection extends Connection {
         this.sqlConfig.getConnection().load(this.sqlConfig);
 
         this.cleanupTask = new SqlCleanupTask(this);
-        this.messagesTask = new SqlCheckMessagesTask(this);
+        this.packetsTask = new SqlCheckPacketsTask(this);
     }
 
     /**
@@ -61,7 +61,7 @@ public class SqlConnection extends Connection {
         return CompletableFuture.runAsync(() -> {
             if (this.checkLock()) return;
 
-            try (PreparedStatement ps = this.prepareStatement("INSERT INTO `" + this.tableName + "` (`time`, 'channel' `message`) VALUES(NOW(), ?, ?)")) {
+            try (PreparedStatement ps = this.prepareStatement("INSERT INTO `" + this.tableName + "` (`time`, 'channel' `packet`) VALUES(NOW(), ?, ?)")) {
                 ps.setString(1, CHANNEL_PREFIX + channel);
                 ps.setString(2, packet.toString(this.config.getContext()));
                 ps.execute();
@@ -118,7 +118,7 @@ public class SqlConnection extends Connection {
     @Override
     public void close() {
         this.cleanupTask.close();
-        this.messagesTask.close();
+        this.packetsTask.close();
 
         this.sqlConfig.getConnection().close();
         super.close();
