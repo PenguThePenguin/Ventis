@@ -2,7 +2,6 @@ package me.pengu.ventis.connection.implementation.sql.tasks;
 
 import me.pengu.ventis.connection.implementation.sql.SqlConnection;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -35,10 +34,8 @@ public class SqlCleanupTask implements Runnable {
     public void run() {
         if (this.connection.checkLock()) return;
 
-        try (Connection connection = this.connection.getConnection()) {
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM `" + this.connection.getTableName() + "` WHERE (NOW() - `time` > 60)")) {
-                ps.execute();
-            }
+        try (PreparedStatement ps = this.connection.prepareStatement("DELETE FROM `" + this.connection.getTableName() + "` WHERE (NOW() - `time` > 60)")) {
+            ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

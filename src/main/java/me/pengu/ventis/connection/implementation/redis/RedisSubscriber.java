@@ -12,9 +12,7 @@ import redis.clients.jedis.JedisPubSub;
 public class RedisSubscriber extends JedisPubSub {
 
     @Getter private boolean closed;
-
     private final RedisConnection connection;
-    private final Jedis jedis;
 
     /**
      * Redis Subscriber instance.
@@ -24,10 +22,12 @@ public class RedisSubscriber extends JedisPubSub {
      */
     public RedisSubscriber(RedisConnection connection) {
         this.connection = connection;
-        this.jedis = this.connection.getJedisPool().getResource();
 
         this.connection.getVentis().getExecutor().submit(() ->
-                this.jedis.subscribe(this, Connection.CHANNEL_PREFIX + "*")
+                this.connection.runCommand(redis -> {
+                    redis.subscribe(this, Connection.CHANNEL_PREFIX + "*");
+                    return null;
+                })
         );
     }
 

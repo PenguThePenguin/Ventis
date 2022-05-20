@@ -9,7 +9,6 @@ import me.pengu.ventis.packet.listener.PacketListenerData;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
@@ -104,6 +103,7 @@ public abstract class Connection {
 
     /**
      * Cleans up this connection instance.
+     *
      * @see Ventis#close()
      */
     public void close() {

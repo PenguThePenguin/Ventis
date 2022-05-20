@@ -1,7 +1,6 @@
 package me.pengu.ventis.connection.implementation.socket.data;
 
 import lombok.Data;
-import me.pengu.ventis.connection.Connection;
 import me.pengu.ventis.connection.implementation.socket.SocketConnection;
 import me.pengu.ventis.packet.Packet;
 

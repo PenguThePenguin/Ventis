@@ -4,9 +4,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import me.pengu.ventis.connection.Connection;
-import me.pengu.ventis.connection.implementation.redis.RedisConnection;
-import me.pengu.ventis.connection.implementation.socket.SocketConnection;
-import me.pengu.ventis.connection.implementation.sql.SqlConnection;
 import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.handler.PacketHandler;
 import me.pengu.ventis.packet.listener.PacketListener;
@@ -40,7 +37,7 @@ public class Ventis {
     /**
      * Ventis instance.
      *
-     * @param config         selected config options {@link VentisConfig}
+     * @param config selected config options {@link VentisConfig}
      */
     public Ventis(VentisConfig config) {
         this.config = config;
@@ -51,6 +48,7 @@ public class Ventis {
         );
         this.packetListeners = new ConcurrentHashMap<>();
     }
+
     /**
      * Registers a connection.
      *
@@ -59,7 +57,6 @@ public class Ventis {
     public void registerConnection(Connection connection) {
         this.connections.put(connection.getName(), connection);
     }
-
 
     /**
      * Gets a connection type from its name and class

@@ -8,7 +8,6 @@ import me.pengu.ventis.packet.Packet;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -44,8 +43,7 @@ public class RedisConnection extends Connection {
      * Sends a packet.
      * @param packet packet to send
      * @param channel redis channel to use
-     *
-     @return a future to manipulate the result of the operation
+     * @return a future to manipulate the result of the operation
      */
     @Override
     public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
@@ -63,19 +61,8 @@ public class RedisConnection extends Connection {
     public <T> T runCommand(Function<Jedis, T> redisCommand) {
         if (!this.isConnected()) return null;
 
-        Jedis jedis = this.jedisPool.getResource();
-
-        try {
+        try (Jedis jedis = this.jedisPool.getResource()) {
             return redisCommand.apply(jedis);
-        } catch (Exception e) {
-            this.jedisPool.returnBrokenResource(jedis);
-            jedis = null; // To make sure that the jedis instance is not returned to the pool again.
-
-            throw new JedisException(e);
-        } finally {
-            if (jedis != null) {
-                this.jedisPool.returnResource(jedis);
-            }
         }
     }
 

@@ -34,7 +34,7 @@ public class SqlConnection extends Connection {
     /**
      * Sql Connection instance.
      *
-     * @param ventis {@link Ventis} instance
+     * @param ventis    {@link Ventis} instance
      * @param sqlConfig the provided options for this connection
      */
     public SqlConnection(Ventis ventis, SqlConfig sqlConfig) {
@@ -61,18 +61,27 @@ public class SqlConnection extends Connection {
         return CompletableFuture.runAsync(() -> {
             if (this.checkLock()) return;
 
-            try (java.sql.Connection connection = getConnection()) {
-                try (PreparedStatement ps = connection.prepareStatement("INSERT INTO `" + getTableName() + "` (`time`, 'channel' `message`) VALUES(NOW(), ?, ?)")) {
-                    ps.setString(1, CHANNEL_PREFIX + channel);
-                    ps.setString(2, packet.toString(this.config.getContext()));
-                    ps.execute();
-                }
-            } catch (Exception e) {
+            try (PreparedStatement ps = this.prepareStatement("INSERT INTO `" + this.tableName + "` (`time`, 'channel' `message`) VALUES(NOW(), ?, ?)")) {
+                ps.setString(1, CHANNEL_PREFIX + channel);
+                ps.setString(2, packet.toString(this.config.getContext()));
+                ps.execute();
+            } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
                 this.lock.readLock().unlock();
             }
         }, this.ventis.getExecutor());
+    }
+
+    /**
+     * Prepares a statement from provided query
+     *
+     * @param query The query to be executed
+     * @return the prepared statement
+     * @throws SQLException when the database isn't active
+     */
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        return this.getConnection().prepareStatement(query);
     }
 
     /**

@@ -1,9 +1,7 @@
 package me.pengu.ventis.connection.implementation.sql.tasks;
 
-import me.pengu.ventis.Ventis;
 import me.pengu.ventis.connection.implementation.sql.SqlConnection;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,21 +36,19 @@ public class SqlCheckMessagesTask implements Runnable {
     public void run() {
         if (this.connection.checkLock()) return;
 
-        try (Connection connection = this.connection.getConnection()) {
-            try (PreparedStatement ps = connection.prepareStatement("SELECT `id`, 'channel', `message`, FROM `" + this.connection.getTableName() + "` WHERE `id` > ? AND (NOW() - `time` < 30)")) {
-                ps.setLong(1, this.connection.getLastId());
+        try (PreparedStatement ps = this.connection.prepareStatement("SELECT `id`, 'channel', `message`, FROM `" + this.connection.getTableName() + "` WHERE `id` > ? AND (NOW() - `time` < 30)")) {
+            ps.setLong(1, this.connection.getLastId());
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
 
-                        long id = rs.getLong("id");
-                        this.connection.setLastId(Math.max(this.connection.getLastId(), id));
+                    long id = rs.getLong("id");
+                    this.connection.setLastId(Math.max(this.connection.getLastId(), id));
 
-                        String message = rs.getString("channel");
-                        String channel = rs.getString("message");
+                    String message = rs.getString("channel");
+                    String channel = rs.getString("message");
 
-                        this.connection.handleMessage(channel, message);
-                    }
+                    this.connection.handleMessage(channel, message);
                 }
             }
         } catch (SQLException e) {
