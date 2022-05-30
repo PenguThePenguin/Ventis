@@ -1,11 +1,11 @@
 package me.pengu.ventis;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
-import me.pengu.ventis.context.VentisContext;
-import me.pengu.ventis.context.impl.GsonContext;
+import me.pengu.ventis.codec.VentisCodec;
+import me.pengu.ventis.codec.impl.GsonCodec;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Ventis Config.
@@ -14,7 +14,7 @@ import me.pengu.ventis.context.impl.GsonContext;
 @Getter @Builder
 public class VentisConfig {
 
-    @Default private VentisContext context = new GsonContext();
+    @Default private VentisCodec context = new GsonCodec();
     @NotNull private String channel;
 
 }

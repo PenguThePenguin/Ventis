@@ -38,7 +38,7 @@ public class Ventis {
      */
     public Ventis(VentisConfig config) {
         this.config = config;
-        this.connections = new HashMap<>();
+        this.connections = new ConcurrentHashMap<>();
 
         this.executor = new ScheduledThreadPoolExecutor(1,
                 new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Ventis - Packet Thread - %d").build()
@@ -122,8 +122,9 @@ public class Ventis {
     public void close() {
         this.executor.shutdown();
         try {
-            if (!executor.awaitTermination(1, TimeUnit.MINUTES))
+            if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
                 Logger.getGlobal().severe("Timed out waiting for ventis executor to terminate");
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

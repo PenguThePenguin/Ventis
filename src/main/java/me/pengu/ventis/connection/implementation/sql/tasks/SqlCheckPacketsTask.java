@@ -18,7 +18,7 @@ public class SqlCheckPacketsTask implements Runnable {
     private final ScheduledFuture<?> task;
 
     /**
-     * Sql Check Messages instance.
+     * Sql Check Packets instance.
      *
      * @param connection {@link SqlConnection} instance
      */

@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import me.pengu.ventis.connection.implementation.redis.RedisConnection;
-import redis.clients.jedis.Protocol;
 
 /**
  * RabbitMQ Config.

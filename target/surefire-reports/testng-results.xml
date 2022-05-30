@@ -2,10 +2,10 @@
 <testng-results skipped="0" failed="0" ignored="0" total="0" passed="0">
   <reporter-output>
   </reporter-output>
-  <suite name="me.pengu.ventis.VentisTest" duration-ms="9" started-at="2022-04-13T19:13:37 BST" finished-at="2022-04-13T19:13:37 BST">
+  <suite name="me.pengu.ventis.VentisTest" duration-ms="8" started-at="2022-05-30T13:52:48 BST" finished-at="2022-05-30T13:52:48 BST">
     <groups>
     </groups>
-    <test name="Command line test" duration-ms="9" started-at="2022-04-13T19:13:37 BST" finished-at="2022-04-13T19:13:37 BST">
+    <test name="Command line test" duration-ms="8" started-at="2022-05-30T13:52:48 BST" finished-at="2022-05-30T13:52:48 BST">
     </test> <!-- Command line test -->
   </suite> <!-- me.pengu.ventis.VentisTest -->
 </testng-results>

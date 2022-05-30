@@ -43,7 +43,7 @@ public class SqlConnection extends Connection {
         this.sqlConfig = sqlConfig;
         this.tableName = Connection.CHANNEL_PREFIX + this.ventis.getConfig().getChannel();
 
-        this.sqlConfig.getConnection().load(this.sqlConfig);
+        this.sqlConfig.getDatabase().load(this.sqlConfig);
 
         this.cleanupTask = new SqlCleanupTask(this);
         this.packetsTask = new SqlCheckPacketsTask(this);
@@ -70,6 +70,7 @@ public class SqlConnection extends Connection {
             } finally {
                 this.lock.readLock().unlock();
             }
+
         }, this.ventis.getExecutor());
     }
 
@@ -91,7 +92,7 @@ public class SqlConnection extends Connection {
      * @throws SQLException when the database isn't active
      */
     public java.sql.Connection getConnection() throws SQLException {
-        return this.sqlConfig.getConnection().getConnection();
+        return this.sqlConfig.getDatabase().getConnection();
     }
 
     /**
@@ -120,7 +121,7 @@ public class SqlConnection extends Connection {
         this.cleanupTask.close();
         this.packetsTask.close();
 
-        this.sqlConfig.getConnection().close();
+        this.sqlConfig.getDatabase().close();
         super.close();
     }
 }

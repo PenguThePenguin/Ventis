@@ -50,7 +50,8 @@ public class RedisConnection extends Connection {
         return CompletableFuture.runAsync(() ->
                 this.runCommand(redis ->
                         redis.publish(CHANNEL_PREFIX + channel, packet.toString(this.config.getContext()))
-                ), this.ventis.getExecutor());
+                ), this.ventis.getExecutor()
+        );
     }
 
     /**

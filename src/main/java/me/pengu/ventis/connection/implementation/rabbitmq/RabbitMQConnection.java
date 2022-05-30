@@ -95,6 +95,7 @@ public class RabbitMQConnection extends Connection {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         }, this.getVentis().getExecutor());
     }
 

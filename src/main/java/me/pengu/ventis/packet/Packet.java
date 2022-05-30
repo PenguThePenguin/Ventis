@@ -1,7 +1,7 @@
 package me.pengu.ventis.packet;
 
 import lombok.Data;
-import me.pengu.ventis.context.VentisContext;
+import me.pengu.ventis.codec.VentisCodec;
 import me.pengu.ventis.connection.Connection;
 
 /**
@@ -23,7 +23,7 @@ public class Packet {
      * @param context Type of context used
      * @return String this packet as a string
      */
-    public String toString(VentisContext context) {
+    public String toString(VentisCodec context) {
         return this.getClassName() + Connection.SPLIT_REGEX + context.serialize(this);
     }
 }

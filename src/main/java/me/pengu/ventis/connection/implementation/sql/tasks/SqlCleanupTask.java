@@ -7,7 +7,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Cleans up Sql packets that are more than a minute old
+ * Cleans up Sql packets that are more than a minute-old.
  * Implements {@link Runnable} for a task to check for updates.
  */
 public class SqlCleanupTask implements Runnable {

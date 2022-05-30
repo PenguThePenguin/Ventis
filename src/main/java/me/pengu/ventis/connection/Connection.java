@@ -3,7 +3,7 @@ package me.pengu.ventis.connection;
 import lombok.Getter;
 import me.pengu.ventis.Ventis;
 import me.pengu.ventis.VentisConfig;
-import me.pengu.ventis.context.VentisContext;
+import me.pengu.ventis.codec.VentisCodec;
 import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.listener.PacketListenerData;
 
@@ -62,7 +62,7 @@ public abstract class Connection {
     public abstract CompletableFuture<Void> sendPacket(Packet packet, String channel);
 
     /**
-     * De-Serializes {@param message} data using provided {@link VentisContext}'s deserializer
+     * De-Serializes {@param message} data using provided {@link VentisCodec}'s deserializer
      *
      * @param channel channel to listen for
      * @param message provided data in form of a String
