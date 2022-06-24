@@ -99,8 +99,14 @@ public class Ventis {
             if (method.getParameterTypes().length != 1
                     || !packet.equals(method.getParameterTypes()[0])) continue;
 
+            if (!method.isAnnotationPresent(PacketHandler.class)) {
+                throw new IllegalArgumentException(
+                        String.format("Failed to register %1$s as it isn't a instance of a Packet (%2$s)",
+                                packet.getName(), listener.getClass().getName())
+                );
+            }
+
             this.registerPacket(packet, method, listener);
-            break;
         }
     }
 
@@ -132,7 +138,7 @@ public class Ventis {
      * Registers a packet based off its method and listener
      *
      * @param packet type to register
-     * @param method instance to register
+     * @param method to register
      * @param listener instance to register
      */
     private void registerPacket(Class<? extends Packet> packet, Method method, PacketListener listener) {

@@ -66,7 +66,7 @@ public class SocketConnection extends Connection {
         return CompletableFuture.runAsync(() -> {
             if (!this.isConnected()) return;
 
-            String data = packet.toString(this.config.getCodex());
+            String data = packet.toString(this.config.getCodec());
 
             for (Server server : this.socketConfig.getServers()) {
                 try (Socket socket = new Socket(server.getInetAddress(), server.getPort());

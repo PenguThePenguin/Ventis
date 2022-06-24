@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter @Builder
 public class VentisConfig {
 
-    @Default private VentisCodec codex = new GsonCodec();
+    @Default private VentisCodec codec = new GsonCodec();
     @NotNull private String channel;
 
 }
