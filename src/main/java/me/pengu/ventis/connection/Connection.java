@@ -80,7 +80,7 @@ public abstract class Connection {
         String data = message.substring(messageIndex + Connection.SPLIT_REGEX.length());
         Class<? extends Packet> packetClass = packetListEntry.getKey();
 
-        Packet packet = this.getConfig().getCodex().deSerialize(data, packetClass);
+        Packet packet = this.getConfig().getCodec().deSerialize(data, packetClass);
 
         for (PacketListenerData packetListener : packetListEntry.getValue()) {
             if (packetListener.getChannels().length > 0 && !Arrays.asList(packetListener.getChannels())

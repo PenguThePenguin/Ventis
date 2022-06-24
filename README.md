@@ -14,7 +14,7 @@ Ventis currently supports multiple connection types:
 ### Setup Ventis and register a Connection:
 ```java
         VentisConfig config = VentisConfig.builder()
-                .codec(new JacksonContext()) // You can use any serializer, even create your own!
+                .codec(new JacksonCodec()) // You can use any codec, even create your own!
                 .channel("bukkit")
                 .build();
 

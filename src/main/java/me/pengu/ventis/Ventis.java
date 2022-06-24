@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
 /**
@@ -26,6 +27,9 @@ import java.util.logging.Logger;
  */
 @Getter @Setter
 public class Ventis {
+
+    private static final BiFunction<String, String, String> INVALID_MESSAGE_FUNCTION = (packet, listener) ->
+            String.format("Failed to register %1$s as it isn't a instance of a Packet (%2$s)", packet, listener);
 
     private VentisConfig config;
     private final Map<String, Connection> connections;
@@ -91,7 +95,7 @@ public class Ventis {
     /**
      * Registers only a certain packet inside a listener
      *
-     * @param packet specified to register
+     * @param packet   specified to register
      * @param listener instance to register
      */
     public void registerPacket(Class<? extends Packet> packet, PacketListener listener) {
@@ -101,8 +105,7 @@ public class Ventis {
 
             if (!method.isAnnotationPresent(PacketHandler.class)) {
                 throw new IllegalArgumentException(
-                        String.format("Failed to register %1$s as it isn't a instance of a Packet (%2$s)",
-                                packet.getName(), listener.getClass().getName())
+                        INVALID_MESSAGE_FUNCTION.apply(packet.getName(), listener.getClass().getName()));
                 );
             }
 
@@ -124,8 +127,7 @@ public class Ventis {
                     || !Packet.class.isAssignableFrom(packetClass)) {
 
                 throw new IllegalArgumentException(
-                        String.format("Failed to register %1$s as it isn't a instance of a Packet (%2$s)",
-                                packetClass.getName(), listener.getClass().getName())
+                        INVALID_MESSAGE_FUNCTION.apply(packetClass.getName(), listener.getClass().getName())
                 );
             }
 
@@ -137,8 +139,8 @@ public class Ventis {
     /**
      * Registers a packet based off its method and listener
      *
-     * @param packet type to register
-     * @param method to register
+     * @param packet   type to register
+     * @param method   to register
      * @param listener instance to register
      */
     private void registerPacket(Class<? extends Packet> packet, Method method, PacketListener listener) {
