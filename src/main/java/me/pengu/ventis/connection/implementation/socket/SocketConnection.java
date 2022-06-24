@@ -8,7 +8,6 @@ import me.pengu.ventis.connection.implementation.socket.data.Server;
 import me.pengu.ventis.packet.Packet;
 
 import java.io.DataOutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
@@ -67,10 +66,10 @@ public class SocketConnection extends Connection {
         return CompletableFuture.runAsync(() -> {
             if (!this.isConnected()) return;
 
-            String data = packet.toString(this.config.getContext());
+            String data = packet.toString(this.config.getCodex());
 
             for (Server server : this.socketConfig.getServers()) {
-                try (Socket socket = new Socket(InetAddress.getByName(server.getAddress()), server.getPort());
+                try (Socket socket = new Socket(server.getInetAddress(), server.getPort());
                      DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
 
                     out.writeUTF(this.socketPrefix); // As we are not subscribing to a specific channel.

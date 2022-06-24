@@ -10,8 +10,10 @@ import me.pengu.ventis.packet.listener.PacketListener;
 import me.pengu.ventis.packet.listener.PacketListenerData;
 
 import java.lang.reflect.Method;
-import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -87,33 +89,61 @@ public class Ventis {
     }
 
     /**
+     * Registers only a certain packet inside a listener
+     *
+     * @param packet specified to register
+     * @param listener instance to register
+     */
+    public void registerPacket(Class<? extends Packet> packet, PacketListener listener) {
+        for (Method method : listener.getClass().getDeclaredMethods()) {
+            if (method.getParameterTypes().length != 1
+                    || !packet.equals(method.getParameterTypes()[0])) continue;
+
+            this.registerPacket(packet, method, listener);
+            break;
+        }
+    }
+
+    /**
      * Registers a listener as well as its packets.
      *
-     * @param packetListener listener instance to register
+     * @param listener instance to register
      */
-    public void registerListener(PacketListener packetListener) {
-        for (Method method : packetListener.getClass().getDeclaredMethods()) {
-            if (!method.isAnnotationPresent(PacketHandler.class)
-                    || method.getParameters().length == 0) continue;
+    public void registerListener(PacketListener listener) {
+        for (Method method : listener.getClass().getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(PacketHandler.class)) continue;
 
-            Class<?> packetClass = method.getParameters()[0].getType();
-            if (!Packet.class.isAssignableFrom(packetClass)) {
+            Class<?> packetClass = method.getParameterTypes()[0];
+            if (method.getParameterTypes().length != 1
+                    || !Packet.class.isAssignableFrom(packetClass)) {
+
                 throw new IllegalArgumentException(
                         String.format("Failed to register %1$s as it isn't a instance of a Packet (%2$s)",
-                                packetClass.getName(), packetListener.getClass().getName())
+                                packetClass.getName(), listener.getClass().getName())
                 );
             }
 
             Class<? extends Packet> packet = packetClass.asSubclass(Packet.class);
-            String[] channels = method.getDeclaredAnnotation(PacketHandler.class).channels();
-
-            // Create an inner entry of packet's class and an empty list if not present
-            Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.getPacketListeners().computeIfAbsent(
-                    packetClass.getName(),
-                    entry -> new SimpleEntry<>(packet, new ArrayList<>())
-            );
-            packetListEntry.getValue().add(new PacketListenerData(packetListener, method, channels));
+            this.registerPacket(packet, method, listener);
         }
+    }
+
+    /**
+     * Registers a packet based off its method and listener
+     *
+     * @param packet type to register
+     * @param method instance to register
+     * @param listener instance to register
+     */
+    private void registerPacket(Class<? extends Packet> packet, Method method, PacketListener listener) {
+        String[] channels = method.getDeclaredAnnotation(PacketHandler.class).channels();
+
+        // Create an inner entry of packet's class and an empty list if not present
+        Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.getPacketListeners().computeIfAbsent(
+                packet.getName(),
+                entry -> new SimpleEntry<>(packet, new ArrayList<>())
+        );
+        packetListEntry.getValue().add(new PacketListenerData(listener, method, channels));
     }
 
     /**

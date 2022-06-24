@@ -20,7 +20,7 @@ public class RedisConnection extends Connection {
 
     @Getter private final JedisPool jedisPool;
 
-    private final RedisConfig redisConfig;
+    public final RedisConfig redisConfig;
     private final RedisSubscriber subscriber;
 
     /**
@@ -49,7 +49,7 @@ public class RedisConnection extends Connection {
     public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
         return CompletableFuture.runAsync(() ->
                 this.runCommand(redis ->
-                        redis.publish(CHANNEL_PREFIX + channel, packet.toString(this.config.getContext()))
+                        redis.publish(CHANNEL_PREFIX + channel, packet.toString(this.config.getCodex()))
                 ), this.ventis.getExecutor()
         );
     }

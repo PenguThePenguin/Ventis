@@ -61,7 +61,7 @@ public class RabbitMQConnection extends Connection {
             this.connectionFactory.setUsername(this.rabbitMQConfig.getUsername());
             this.connectionFactory.setPassword(this.rabbitMQConfig.getPassword());
 
-            this.connection = connectionFactory.newConnection();
+            this.connection = this.connectionFactory.newConnection();
             this.channel = this.connection.createChannel();
 
             String queue = this.channel.queueDeclare("", DURABLE, EXCLUSIVE, AUTO_DELETE, null).getQueue();
@@ -88,7 +88,7 @@ public class RabbitMQConnection extends Connection {
             ByteArrayDataOutput output = ByteStreams.newDataOutput();
 
             output.writeUTF(CHANNEL_PREFIX + channel);
-            output.writeUTF(packet.toString(this.config.getContext()));
+            output.writeUTF(packet.toString(this.config.getCodex()));
 
             try {
                 this.channel.basicPublish(EXCHANGE_NAME, this.routingKey, new BasicProperties.Builder().build(), output.toByteArray());

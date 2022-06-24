@@ -80,8 +80,7 @@ public abstract class Connection {
         String data = message.substring(messageIndex + Connection.SPLIT_REGEX.length());
         Class<? extends Packet> packetClass = packetListEntry.getKey();
 
-        Packet packet = this.getConfig().getContext().deSerialize(data, packetClass);
-        if (!packetClass.getName().equalsIgnoreCase(packet.getClassName())) return false; // Invalid packet, end.
+        Packet packet = this.getConfig().getCodex().deSerialize(data, packetClass);
 
         for (PacketListenerData packetListener : packetListEntry.getValue()) {
             if (packetListener.getChannels().length > 0 && !Arrays.asList(packetListener.getChannels())
