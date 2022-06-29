@@ -48,7 +48,7 @@ public class ExamplePacket extends Packet {
 
 ### Create a listener
 ```java
-public class ExampleListener extends PacketListener {
+public class ExampleListener implements PacketListener {
 
     @PacketHandler(channels = {"channel1", "channel2"}) // Channels are optional.
     public void onExamplePacket(ExamplePacket packet) {

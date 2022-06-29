@@ -63,7 +63,7 @@ public class SqlConnection extends Connection {
 
             try (PreparedStatement ps = this.prepareStatement("INSERT INTO `" + this.tableName + "` (`time`, 'channel' `packet`) VALUES(NOW(), ?, ?)")) {
                 ps.setString(1, CHANNEL_PREFIX + channel);
-                ps.setString(2, packet.toString(this.config));
+                ps.setString(2, packet.toString(channel, this.config.getCodec()));
                 ps.execute();
             } catch (SQLException e) {
                 e.printStackTrace();

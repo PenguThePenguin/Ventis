@@ -19,12 +19,13 @@ public class Packet {
     /**
      * Gets this packet as a string.
      *
-     * @param codec Type of codec used
-     * @return String this packet as a string
+     * @param channel the channel this was sent on
+     * @param codec   Type of codec used
+     * @return this packet as a string
      */
     public String toString(String channel, VentisCodec codec) {
         this.chanel = channel;
 
-        return this.getClass().getName() + Connection.SPLIT_REGEX + codec.serialize(this);
+        return this.getClass().getSimpleName() + Connection.SPLIT_REGEX + codec.serialize(this);
     }
 }

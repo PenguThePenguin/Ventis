@@ -106,7 +106,7 @@ public class Ventis {
                     || !Packet.class.isAssignableFrom(packetClass)) {
 
                 throw new IllegalArgumentException(
-                        INVALID_MESSAGE_FUNCTION.apply(packetClass.getName(), listener.getClass().getName())
+                        INVALID_MESSAGE_FUNCTION.apply(packetClass.getName(), listener.getClass().getSimpleName())
                 );
             }
 
@@ -128,7 +128,7 @@ public class Ventis {
 
             if (!method.isAnnotationPresent(PacketHandler.class)) {
                 throw new IllegalArgumentException(
-                        INVALID_MESSAGE_FUNCTION.apply(packet.getName(), listener.getClass().getName())
+                        INVALID_MESSAGE_FUNCTION.apply(packet.getName(), listener.getClass().getSimpleName())
                 );
             }
 
@@ -147,8 +147,8 @@ public class Ventis {
         String[] channels = method.getDeclaredAnnotation(PacketHandler.class).channels();
 
         // Create an inner entry of packet's class and an empty list if not present
-        Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.getPacketListeners().computeIfAbsent(
-                packet.getName(),
+        Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.packetListeners.computeIfAbsent(
+                packet.getSimpleName(),
                 entry -> new SimpleEntry<>(packet, new ArrayList<>())
         );
         packetListEntry.getValue().add(new PacketListenerData(listener, method, channels));
