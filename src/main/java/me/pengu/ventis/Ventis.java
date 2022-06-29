@@ -93,27 +93,6 @@ public class Ventis {
     }
 
     /**
-     * Registers only a certain packet inside a listener
-     *
-     * @param packet   specified to register
-     * @param listener instance to register
-     */
-    public void registerPacket(Class<? extends Packet> packet, PacketListener listener) {
-        for (Method method : listener.getClass().getDeclaredMethods()) {
-            if (method.getParameterTypes().length != 1
-                    || !packet.equals(method.getParameterTypes()[0])) continue;
-
-            if (!method.isAnnotationPresent(PacketHandler.class)) {
-                throw new IllegalArgumentException(
-                        INVALID_MESSAGE_FUNCTION.apply(packet.getName(), listener.getClass().getName()));
-                );
-            }
-
-            this.registerPacket(packet, method, listener);
-        }
-    }
-
-    /**
      * Registers a listener as well as its packets.
      *
      * @param listener instance to register
@@ -132,6 +111,27 @@ public class Ventis {
             }
 
             Class<? extends Packet> packet = packetClass.asSubclass(Packet.class);
+            this.registerPacket(packet, method, listener);
+        }
+    }
+
+    /**
+     * Registers only a certain packet inside a listener
+     *
+     * @param packet   specified to register
+     * @param listener instance to register
+     */
+    public void registerPacket(Class<? extends Packet> packet, PacketListener listener) {
+        for (Method method : listener.getClass().getDeclaredMethods()) {
+            if (method.getParameterTypes().length != 1
+                    || !packet.equals(method.getParameterTypes()[0])) continue;
+
+            if (!method.isAnnotationPresent(PacketHandler.class)) {
+                throw new IllegalArgumentException(
+                        INVALID_MESSAGE_FUNCTION.apply(packet.getName(), listener.getClass().getName())
+                );
+            }
+
             this.registerPacket(packet, method, listener);
         }
     }

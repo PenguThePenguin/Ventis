@@ -88,7 +88,7 @@ public class RabbitMQConnection extends Connection {
             ByteArrayDataOutput output = ByteStreams.newDataOutput();
 
             output.writeUTF(CHANNEL_PREFIX + channel);
-            output.writeUTF(packet.toString(this.config.getCodec()));
+            output.writeUTF(packet.toString(channel, this.config.getCodec()));
 
             try {
                 this.channel.basicPublish(EXCHANGE_NAME, this.routingKey, new BasicProperties.Builder().build(), output.toByteArray());

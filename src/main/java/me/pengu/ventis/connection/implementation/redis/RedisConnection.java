@@ -49,7 +49,7 @@ public class RedisConnection extends Connection {
     public CompletableFuture<Void> sendPacket(Packet packet, String channel) {
         return CompletableFuture.runAsync(() ->
                 this.runCommand(redis ->
-                        redis.publish(CHANNEL_PREFIX + channel, packet.toString(this.config.getCodec()))
+                        redis.publish(CHANNEL_PREFIX + channel, packet.toString(channel, this.config.getCodec()))
                 ), this.ventis.getExecutor()
         );
     }

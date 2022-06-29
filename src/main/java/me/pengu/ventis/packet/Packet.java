@@ -12,12 +12,19 @@ import me.pengu.ventis.connection.Connection;
 public class Packet {
 
     /**
+     * The channel this packet was sent on
+     */
+    private String chanel;
+
+    /**
      * Gets this packet as a string.
      *
-     * @param context Type of context used
+     * @param codec Type of codec used
      * @return String this packet as a string
      */
-    public String toString(VentisCodec context) {
-        return this.getClass().getName() + Connection.SPLIT_REGEX + context.serialize(this);
+    public String toString(String channel, VentisCodec codec) {
+        this.chanel = channel;
+
+        return this.getClass().getName() + Connection.SPLIT_REGEX + codec.serialize(this);
     }
 }

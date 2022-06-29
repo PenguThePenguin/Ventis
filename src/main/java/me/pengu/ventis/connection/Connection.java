@@ -74,13 +74,13 @@ public abstract class Connection {
         String packetName = message.substring(0, messageIndex);
 
         Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry =
-                this.getVentis().getPacketListeners().get(packetName);
+                this.ventis.getPacketListeners().get(packetName);
         if (packetListEntry == null) return false;
 
         String data = message.substring(messageIndex + Connection.SPLIT_REGEX.length());
         Class<? extends Packet> packetClass = packetListEntry.getKey();
 
-        Packet packet = this.getConfig().getCodec().deSerialize(data, packetClass);
+        Packet packet = this.config.getCodec().deSerialize(data, packetClass);
 
         for (PacketListenerData packetListener : packetListEntry.getValue()) {
             if (packetListener.getChannels().length > 0 && !Arrays.asList(packetListener.getChannels())
