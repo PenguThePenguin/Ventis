@@ -7,7 +7,6 @@ import me.pengu.ventis.codec.VentisCodec;
 import me.pengu.ventis.packet.Packet;
 import me.pengu.ventis.packet.listener.PacketListenerData;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
@@ -83,7 +82,7 @@ public abstract class Connection {
         Packet packet = this.config.getCodec().deSerialize(data, packetClass);
 
         for (PacketListenerData packetListener : packetListEntry.getValue()) {
-            if (packetListener.getChannels().length > 0 && !Arrays.asList(packetListener.getChannels())
+            if (!packetListener.getChannels().isEmpty() && !packetListener.getChannels()
                     .contains(channel.substring(channel.indexOf(":") + ":".length()))) continue;
             // This is checking the annotation @PacketHandler's channels [if they exist and if they match this channel]
 

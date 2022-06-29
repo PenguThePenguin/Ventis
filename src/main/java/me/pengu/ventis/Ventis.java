@@ -12,6 +12,7 @@ import me.pengu.ventis.packet.listener.PacketListenerData;
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -144,11 +145,11 @@ public class Ventis {
      * @param listener instance to register
      */
     private void registerPacket(Class<? extends Packet> packet, Method method, PacketListener listener) {
-        String[] channels = method.getDeclaredAnnotation(PacketHandler.class).channels();
+        List<String> channels = Arrays.asList(method.getDeclaredAnnotation(PacketHandler.class).channels());
 
         // Create an inner entry of packet's class and an empty list if not present
         Entry<Class<? extends Packet>, List<PacketListenerData>> packetListEntry = this.packetListeners.computeIfAbsent(
-                packet.getSimpleName(),
+                packet.getSimpleName().toLowerCase(),
                 entry -> new SimpleEntry<>(packet, new ArrayList<>())
         );
         packetListEntry.getValue().add(new PacketListenerData(listener, method, channels));

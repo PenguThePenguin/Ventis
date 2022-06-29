@@ -26,6 +26,6 @@ public class Packet {
     public String toString(String channel, VentisCodec codec) {
         this.chanel = channel;
 
-        return this.getClass().getSimpleName() + Connection.SPLIT_REGEX + codec.serialize(this);
+        return this.getClass().getSimpleName().toLowerCase() + Connection.SPLIT_REGEX + codec.serialize(this);
     }
 }
